@@ -168,6 +168,9 @@ public class ampacheCommunicator
                         } else if (directive[0].equals("tag_artists")) {
                             append += "&filter=" + directive[1];
                             hand = new ampacheArtistParser();
+                        } else if (directive[0].equals("tag_songs")) {
+                            append += "&filter=" + directive[1];
+                            hand = new ampacheSongParser();
                         } else if (directive[0].equals("albums")) {
                             hand = new ampacheAlbumParser();
                         } else if (directive[0].equals("playlists")) {
@@ -180,7 +183,7 @@ public class ampacheCommunicator
                             hand = new ampacheSongParser();
                             append += "&filter=" + directive[1];
                         } else {
-                            return; // new ArrayList();
+                            return; 
                         }
                         
                         if (msg.what == 0x1336) {
