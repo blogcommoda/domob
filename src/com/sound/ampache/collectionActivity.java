@@ -77,7 +77,7 @@ public final class collectionActivity extends ListActivity implements OnItemLong
         amdroid.comm.ping();
 
         // We've tried to login, and failed, so present the user with the preferences pane
-        if (amdroid.comm.authToken.equals("") || amdroid.comm.authToken == null) {
+        if (amdroid.comm.authToken == null || amdroid.comm.authToken.equals("")) {
             Toast.makeText(this, "Login Failed: " + amdroid.comm.lastErr, Toast.LENGTH_LONG).show();
             Intent prefsIntent = new Intent().setClass(this, prefsActivity.class);
             startActivity(prefsIntent);
