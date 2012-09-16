@@ -402,9 +402,18 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
         try {
             Log.i("Amdroid", "Song URL     - " + chosen.url );
             Log.i("Amdroid", "Song URL (C) - " + chosen.liveUrl() );
-            amdroid.mp.setDataSource(chosen.liveUrl());
-            amdroid.mp.prepareAsync();
-            prepared = false;
+            // Check to see if the file is already cached
+            if (mMediaCache.check_if_cached(Long.valueOf(chosen.id)) == true)
+            {
+              Log.i("Amdroid", "Playing Song ID " + chosen.id + "from local cache.");
+            }
+            else
+            {
+              Log.i("Amdroid", "Song ID " + chosen.id + " has not been cached yet.");
+              amdroid.mp.setDataSource(chosen.liveUrl());
+              amdroid.mp.prepareAsync();
+              prepared = false;
+            }
         } catch (Exception blah) {
             Log.i("Amdroid", "Tried to get the song but couldn't...sorry D:");
             return;
