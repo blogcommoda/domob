@@ -44,7 +44,7 @@ public class MediaCache
   /** \brief Add a song to the local music cache.
    *  \param[in] songUid The unique ID as from Ampache.
    */
-  public void cache_file(long songUid) throws Exception
+  public void cache_song(long songUid) throws Exception
   {
     // If the song is already cached, we are already done
     if (check_if_cached(songUid))
