@@ -47,10 +47,12 @@ public class MediaCache
   public void cache_song(long songUid) throws Exception
   {
     // If the song is already cached, we are already done
-    if (check_if_cached(songUid))
+    if (check_if_cached(songUid) == true)
     {
       return;
     }
+
+    Log.i(TAG, "Attempting to cache song ID " + songUid);
   }
 
   /** \brief Check to see if a song is already in the local music cache.
