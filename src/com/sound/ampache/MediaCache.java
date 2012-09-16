@@ -57,10 +57,19 @@ public class MediaCache
    *  \return Returns true if the song is already cached, false otherwise.
    *  \param[in] songUid The unique ID as from Ampache.
    */
-  private boolean check_if_cached(long songUid) throws Exception
+  public boolean check_if_cached(long songUid) throws Exception
   {
     // Initially set to false. Will switch to true if we find the file.
     boolean cached = false;
+    // Construct the path to check for the cached song
+    File testFile = new File(cacheDir.getAbsolutePath() + "/" + songUid);
+
+    Log.i(TAG, "Checking if " + testFile + " exists.");
+    if (testFile.exists() == true)
+    {
+      cached = true;
+      Log.i(TAG, testFile + " exists.");
+    }
 
     return cached;
   }
