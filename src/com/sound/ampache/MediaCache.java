@@ -64,7 +64,7 @@ public class MediaCache
     // Initially set to false. Will switch to true if we find the file.
     boolean cached = false;
     // Construct the path to check for the cached song
-    File testFile = new File(cacheDir.getAbsolutePath() + "/" + songUid);
+    File testFile = new File(cached_song_path(songUid));
 
     Log.i(TAG, "Checking if " + testFile + " exists.");
     if (testFile.exists() == true)
