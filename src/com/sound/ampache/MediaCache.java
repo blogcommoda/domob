@@ -22,7 +22,7 @@ public class MediaCache
   private DownloadManager dm;
   private long enqueue;
   private Context mContext;
-  private long maxCacheSize; /// This is the maximum amount of data to cache
+  private static final long maxCacheSize = 100*1024*1024; /// Maximum amount of data to cache
   private File cacheDir; /// Folder to store all of the local files
   private static final String TAG = "MediaCache"; /// Used for calls to Log
 
@@ -30,7 +30,6 @@ public class MediaCache
   {
     mContext = mCtxt;
     dm = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
-    maxCacheSize = 100*1024*1024; // 100 MiB
 
     // Setup the directory to store the cache on the external storage
     File externalMusicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
