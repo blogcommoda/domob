@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.ImageView;
+import android.util.Log;
 import java.io.File;
 
 public class MediaCache
@@ -23,6 +24,7 @@ public class MediaCache
   private Context mContext;
   private long maxCacheSize; /// This is the maximum amount of data to cache
   private File cacheDir; /// Folder to store all of the local files
+  private static final String TAG = "MediaCache"; /// Used for calls to Log
 
   MediaCache (Context mCtxt)
   {
@@ -33,6 +35,11 @@ public class MediaCache
     // Setup the directory to store the cache on the external storage
     File externalMusicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
     cacheDir = new File(externalMusicDir.getAbsolutePath() + "ampacheCache");
+    if (cacheDir.exists() == false)
+    {
+      Log.i(TAG, cacheDir + " does not exist, creating directory.");
+      cacheDir.mkdirs();
+    }
   }
 
   /** \brief Add a song to the local music cache.
