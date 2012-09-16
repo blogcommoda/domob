@@ -23,10 +23,6 @@ public class MediaCache
   MediaCache (Context mCtxt)
   {
     mContext = mCtxt;
-  }
-
-  MediaCache ()
-  {
     dm = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
   }
 
