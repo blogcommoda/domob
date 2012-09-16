@@ -26,8 +26,24 @@ public class MediaCache
     dm = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
   }
 
-  /*public void cache_file() throws Exception
+  /** \brief Add a song to the local music cache.
+   *  \param[in] songUid The unique ID as from Ampache.
+   */
+  public void cache_file(long songUid) throws Exception
   {
 
-  }*/
+  }
+
+  /** \brief Check to see if a song is already in the local music cache.
+   *  \return Returns true if the song is already cached, false otherwise.
+   *  \param[in] songUid The unique ID as from Ampache.
+   */
+  private boolean check_if_cached(long songUid) throws Exception
+  {
+    // Initially set to false. Will switch to true if we find the file.
+    boolean cached = false;
+
+    return cached;
+  }
 }
+
