@@ -83,7 +83,9 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
         amdroid.mp.setOnBufferingUpdateListener(this);
         amdroid.mp.setOnCompletionListener(this);
         mc = new staticMedia(this);
-     
+
+        mMediaCache = new MediaCache(getApplicationContext());
+
         amdroid.mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mp) {
                     amdroid.mp.start();
