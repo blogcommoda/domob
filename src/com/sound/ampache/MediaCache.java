@@ -33,7 +33,7 @@ public class MediaCache
 
     // Setup the directory to store the cache on the external storage
     File externalMusicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
-    cacheDir = new File(externalMusicDir.getAbsolutePath() + "ampacheCache");
+    cacheDir = new File(externalMusicDir.getAbsolutePath() + "/ampachecache");
     if (cacheDir.exists() == false)
     {
       Log.i(TAG, cacheDir + " does not exist, creating directory.");
