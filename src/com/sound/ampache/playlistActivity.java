@@ -44,6 +44,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import com.sound.ampache.staticMedia.MediaPlayerControl;
 import com.sound.ampache.objects.Song;
+import com.sound.ampache.MediaCache;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.widget.Toast;
@@ -69,6 +70,8 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
     private Boolean prepared = true;
 
     private Boolean albumArtEnabled = false;
+
+    private MediaCache mMediaCache; ///Used to cache songs locally
 
     public void onCreate(Bundle savedInstanceState)
     {
