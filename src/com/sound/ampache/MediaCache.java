@@ -75,5 +75,17 @@ public class MediaCache
 
     return cached;
   }
+
+  /**
+   * \return Returns a string with the path to the cached file or location
+   *         where the file would be cached. In other words, this takes a
+   *         song UID and converts that into a string for the file path.
+   * \param[in] songUid the unique ID as from Ampache
+   */
+  private String cached_song_path(long songUid) throws Exception
+  {
+    String path = cacheDir.getAbsolutePath() + "/" + songUid;
+    return path;
+  }
 }
 
