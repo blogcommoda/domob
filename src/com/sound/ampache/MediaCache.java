@@ -22,7 +22,7 @@ public class MediaCache
   private long enqueue;
   private Context mContext;
   private long maxCacheSize; /// This is the maximum amount of data to cache
-  private String cacheDir; /// Folder to store all of the local files
+  private File cacheDir; /// Folder to store all of the local files
 
   MediaCache (Context mCtxt)
   {
@@ -32,7 +32,7 @@ public class MediaCache
 
     // Setup the directory to store the cache on the external storage
     File externalMusicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
-    File cacheDir = new File(externalMusicDir.getAbsolutePath() + "ampacheCache");
+    cacheDir = new File(externalMusicDir.getAbsolutePath() + "ampacheCache");
   }
 
   /** \brief Add a song to the local music cache.
