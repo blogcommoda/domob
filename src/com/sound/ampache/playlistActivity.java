@@ -406,6 +406,9 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
             if (mMediaCache.check_if_cached(Long.valueOf(chosen.id)) == true)
             {
               Log.i("Amdroid", "Playing Song ID " + chosen.id + "from local cache.");
+              amdroid.mp.setDataSource(mMediaCache.cached_song_path(Long.valueOf(chosen.id)));
+              amdroid.mp.prepareAsync();
+              prepared = false;
             }
             else
             {
