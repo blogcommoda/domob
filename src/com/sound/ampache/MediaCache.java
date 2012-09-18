@@ -162,7 +162,7 @@ public class MediaCache
    *         song UID and converts that into a string for the file path.
    * \param[in] songUid the unique ID as from Ampache
    */
-  private String cached_song_path(long songUid)
+  public String cached_song_path(long songUid)
   {
     String path = cacheDir.getAbsolutePath() + "/" + songUid;
     return path;
