@@ -78,6 +78,11 @@ public class MediaCache
     Log.i(TAG, "Attempting to cache song ID " + songUid);
     // Generate a new request to then add to the download manager queue.
     Request request = new Request(Uri.parse(songUrl));
+    // We can keep track of the Ampache song ID in the download description
+    request.setDescription(String.valueOf(songUid));
+    // Set the destination to the external device in the downloads directory
+    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
+                                              "ampachetmp/" + songUid);
     // Queue up the request
     mDownloadId = dm.enqueue(request);
   }
@@ -89,6 +94,45 @@ public class MediaCache
   {
     Log.i(TAG, "In download_complete method");
     String action = intent.getAction();
+    // Check to see if the action corresponds to a completed download
+    if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+      // Query for more info using the ID
+      Query query = new Query();
+      query.setFilterById(mDownloadId);
+      Cursor cur = dm.query(query);
+
+      // Access the first row of data returned
+      if (cur.moveToFirst())
+      {
+        // Find the column which corresponds to the download status
+        int statusIndex = cur.getColumnIndex(DownloadManager.COLUMN_STATUS);
+        // If the download was successful try and move the file to our cache location
+        if (DownloadManager.STATUS_SUCCESSFUL == cur.getInt(statusIndex))
+        {
+          // Find the column which corresponds to the current file URI
+          int uriIndex = cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+          // Retreive the temporary URI to where DownloadManager stored the file
+          String downloadUri = cur.getString(uriIndex);
+          File downloadFile = new File(Uri.parse(downloadUri).getPath());
+
+          // Find the column which corresponds to the description we provided (Ampache song id)
+          int descriptionIndex = cur.getColumnIndex(DownloadManager.COLUMN_DESCRIPTION);
+          // Retreive the description
+          long ampacheSongUid = cur.getLong(descriptionIndex);
+
+          // Setup the destination file
+          String destinationPath = cached_song_path(ampacheSongUid);
+          File destinationFile = new File(Uri.parse(destinationPath).getPath());
+
+          // Move the file
+          Log.i(TAG, "Moving " + downloadFile + " to " + destinationFile);
+          if (downloadFile.renameTo(destinationFile))
+          {
+            Log.i(TAG, destinationFile + " moved successfully");
+          }
+        }
+      }
+    }
   }
 
   /** \brief Check to see if a song is already in the local music cache.
