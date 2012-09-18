@@ -20,7 +20,7 @@ import java.io.File;
 public class MediaCache
 {
   private DownloadManager dm;
-  private long enqueue;
+  private long mDownloadId;
   private Context mContext;
   private static final long maxCacheSize = 100*1024*1024; /// Maximum amount of data to cache
   private File cacheDir; /// Folder to store all of the local files
@@ -66,6 +66,10 @@ public class MediaCache
     }
 
     Log.i(TAG, "Attempting to cache song ID " + songUid);
+    // Generate a new request to then add to the download manager queue.
+    Request request = new Request(Uri.parse(songUrl));
+    // Queue up the request
+    mDownloadId = dm.enqueue(request);
   }
 
   /** \brief Handle the song finished download.
