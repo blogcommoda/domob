@@ -30,7 +30,7 @@ public class MediaCache
   {
     public void onReceive(Context context, Intent intent)
     {
-      String action = intent.getAction();
+      download_complete(intent);
     }
   };
 
@@ -66,6 +66,15 @@ public class MediaCache
     }
 
     Log.i(TAG, "Attempting to cache song ID " + songUid);
+  }
+
+  /** \brief Handle the song finished download.
+   *
+   */
+  private void download_complete(Intent intent)
+  {
+    Log.i(TAG, "In download_complete method");
+    String action = intent.getAction();
   }
 
   /** \brief Check to see if a song is already in the local music cache.
