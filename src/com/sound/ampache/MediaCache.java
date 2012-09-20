@@ -24,7 +24,7 @@ public class MediaCache
   private Context mContext;
   private static final long MAX_CACHE_SIZE = 100*1024*1024; /// Maximum amount of data to cache
   private File mCacheDir; /// Folder to store all of the local files
-  private File tempDownloadDir; /// Folder to temporarily store files while downloading
+  private File mTempDownloadDir; /// Folder to temporarily store files while downloading
   private static final String TAG = "MediaCache"; /// Used for calls to Log
   /// Called when the download finishes. This calls our private method to actually do the work.
   BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver()
@@ -51,11 +51,11 @@ public class MediaCache
 
     // Setup the directory to store the temporary DownloadManager files
     File externalDownloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-    tempDownloadDir = new File(externalDownloadDir.getAbsolutePath() + "/ampachetmp");
-    if (tempDownloadDir.exists() == false)
+    mTempDownloadDir = new File(externalDownloadDir.getAbsolutePath() + "/ampachetmp");
+    if (mTempDownloadDir.exists() == false)
     {
-      Log.i(TAG, tempDownloadDir + " does not exist, creating directory.");
-      tempDownloadDir.mkdirs();
+      Log.i(TAG, mTempDownloadDir + " does not exist, creating directory.");
+      mTempDownloadDir.mkdirs();
     }
 
     // When the Android download manager finishes a download
