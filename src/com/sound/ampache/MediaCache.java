@@ -19,7 +19,7 @@ import java.io.File;
 
 public class MediaCache
 {
-  private DownloadManager dm;
+  private DownloadManager mDownloadManager;
   private long mDownloadId;
   private Context mContext;
   private static final long maxCacheSize = 100*1024*1024; /// Maximum amount of data to cache
@@ -38,7 +38,7 @@ public class MediaCache
   MediaCache (Context mCtxt)
   {
     mContext = mCtxt;
-    dm = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+    mDownloadManager = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
 
     // Setup the directory to store the cache on the external storage
     File externalMusicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
@@ -84,7 +84,7 @@ public class MediaCache
     request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
                                               "ampachetmp/" + songUid);
     // Queue up the request
-    mDownloadId = dm.enqueue(request);
+    mDownloadId = mDownloadManager.enqueue(request);
   }
 
   /** \brief Handle the song finished download.
@@ -99,7 +99,7 @@ public class MediaCache
       // Query for more info using the ID
       Query query = new Query();
       query.setFilterById(mDownloadId);
-      Cursor cur = dm.query(query);
+      Cursor cur = mDownloadManager.query(query);
 
       // Access the first row of data returned
       if (cur.moveToFirst())
