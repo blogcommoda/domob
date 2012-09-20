@@ -22,7 +22,7 @@ public class MediaCache
   private DownloadManager mDownloadManager;
   private long mDownloadId;
   private Context mContext;
-  private static final long maxCacheSize = 100*1024*1024; /// Maximum amount of data to cache
+  private static final long MAX_CACHE_SIZE = 100*1024*1024; /// Maximum amount of data to cache
   private File cacheDir; /// Folder to store all of the local files
   private File tempDownloadDir; /// Folder to temporarily store files while downloading
   private static final String TAG = "MediaCache"; /// Used for calls to Log
