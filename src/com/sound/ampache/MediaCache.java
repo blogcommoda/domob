@@ -23,7 +23,7 @@ public class MediaCache
   private long mDownloadId;
   private Context mContext;
   private static final long MAX_CACHE_SIZE = 100*1024*1024; /// Maximum amount of data to cache
-  private File cacheDir; /// Folder to store all of the local files
+  private File mCacheDir; /// Folder to store all of the local files
   private File tempDownloadDir; /// Folder to temporarily store files while downloading
   private static final String TAG = "MediaCache"; /// Used for calls to Log
   /// Called when the download finishes. This calls our private method to actually do the work.
@@ -42,11 +42,11 @@ public class MediaCache
 
     // Setup the directory to store the cache on the external storage
     File externalMusicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
-    cacheDir = new File(externalMusicDir.getAbsolutePath() + "/ampachecache");
-    if (cacheDir.exists() == false)
+    mCacheDir = new File(externalMusicDir.getAbsolutePath() + "/ampachecache");
+    if (mCacheDir.exists() == false)
     {
-      Log.i(TAG, cacheDir + " does not exist, creating directory.");
-      cacheDir.mkdirs();
+      Log.i(TAG, mCacheDir + " does not exist, creating directory.");
+      mCacheDir.mkdirs();
     }
 
     // Setup the directory to store the temporary DownloadManager files
@@ -164,7 +164,7 @@ public class MediaCache
    */
   public String cached_song_path(long songUid)
   {
-    String path = cacheDir.getAbsolutePath() + "/" + songUid;
+    String path = mCacheDir.getAbsolutePath() + "/" + songUid;
     return path;
   }
 }
