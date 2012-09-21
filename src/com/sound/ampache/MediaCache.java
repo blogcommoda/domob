@@ -22,7 +22,7 @@ public class MediaCache
   private DownloadManager mDownloadManager;
   private long mDownloadId;
   private Context mContext;
-  private static final long MAX_CACHE_SIZE = 100*1024*1024; /// Maximum amount of data to cache
+  private static final long MAX_SONGS_CACHED = 100; /// Maximum number of songs to cache
   private File mCacheDir; /// Folder to store all of the local files
   private File mTempDownloadDir; /// Folder to temporarily store files while downloading
   private static final String TAG = "MediaCache"; /// Used for calls to Log
@@ -154,6 +154,27 @@ public class MediaCache
     }
 
     return cached;
+  }
+
+  /** \brief This checks to see if the cache directory has room for another song.
+   *  \return Returns a boolean indicating that the external storage does have cache
+   *          space available.
+   */
+  private boolean check_if_space_available()
+  {
+    // Initially set to false. Will switch to true if we find available space.
+    boolean spaceAvailable = false;
+    // Collect the list of files currently in the cache directory
+    String fileList[] = mCacheDir.list();
+    Log.i(TAG, "check_if_space_available, current # of files cached: " + fileList.length);
+
+    // If there is room left, return true
+    if (fileList.length < MAX_SONGS_CACHED)
+    {
+      spaceAvailable = true;
+    }
+
+    return spaceAvailable;
   }
 
   /**
