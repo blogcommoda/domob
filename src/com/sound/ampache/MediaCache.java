@@ -17,8 +17,7 @@ import android.widget.ImageView;
 import android.util.Log;
 import java.io.File;
 
-public class MediaCache
-{
+public class MediaCache {
   private DownloadManager mDownloadManager;
   private long mDownloadId;
   private Context mContext;
@@ -27,24 +26,20 @@ public class MediaCache
   private File mTempDownloadDir; /// Folder to temporarily store files while downloading
   private static final String TAG = "MediaCache"; /// Used for calls to Log
   /// Called when the download finishes. This calls our private method to actually do the work.
-  BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver()
-  {
-    public void onReceive(Context context, Intent intent)
-    {
+  BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver() {
+    public void onReceive(Context context, Intent intent) {
       download_complete(intent);
     }
   };
 
-  MediaCache (Context mCtxt)
-  {
+  MediaCache (Context mCtxt) {
     mContext = mCtxt;
     mDownloadManager = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
 
     // Setup the directory to store the cache on the external storage
     File externalMusicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
     mCacheDir = new File(externalMusicDir.getAbsolutePath() + "/ampachecache");
-    if (mCacheDir.exists() == false)
-    {
+    if (mCacheDir.exists() == false) {
       Log.i(TAG, mCacheDir + " does not exist, creating directory.");
       mCacheDir.mkdirs();
     }
@@ -52,8 +47,7 @@ public class MediaCache
     // Setup the directory to store the temporary DownloadManager files
     File externalDownloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
     mTempDownloadDir = new File(externalDownloadDir.getAbsolutePath() + "/ampachetmp");
-    if (mTempDownloadDir.exists() == false)
-    {
+    if (mTempDownloadDir.exists() == false) {
       Log.i(TAG, mTempDownloadDir + " does not exist, creating directory.");
       mTempDownloadDir.mkdirs();
     }
@@ -67,12 +61,15 @@ public class MediaCache
    *  \param[in] songUid The unique ID as from Ampache.
    *  \param[in] songUrl The actual live URL to download the track from Ampache.
    */
-  public void cache_song(long songUid, String songUrl) throws Exception
-  {
+  public void cache_song(long songUid, String songUrl) throws Exception {
     // If the song is already cached, we are already done
-    if (check_if_cached(songUid) == true)
-    {
+    if (check_if_cached(songUid) == true) {
       return;
+    }
+
+    // If the song is not cached, then we want to cache it. First check if there is room
+    if (check_if_space_available() == false) {
+      Log.i(TAG, "check_if_space_available returned false. Clearing new space.");
     }
 
     Log.i(TAG, "Attempting to cache song ID " + songUid);
@@ -90,8 +87,7 @@ public class MediaCache
   /** \brief Handle the song finished download.
    *
    */
-  private void download_complete(Intent intent)
-  {
+  private void download_complete(Intent intent) {
     Log.i(TAG, "In download_complete method");
     String action = intent.getAction();
     // Check to see if the action corresponds to a completed download
@@ -102,13 +98,11 @@ public class MediaCache
       Cursor cur = mDownloadManager.query(query);
 
       // Access the first row of data returned
-      if (cur.moveToFirst())
-      {
+      if (cur.moveToFirst()) {
         // Find the column which corresponds to the download status
         int statusIndex = cur.getColumnIndex(DownloadManager.COLUMN_STATUS);
         // If the download was successful try and move the file to our cache location
-        if (DownloadManager.STATUS_SUCCESSFUL == cur.getInt(statusIndex))
-        {
+        if (DownloadManager.STATUS_SUCCESSFUL == cur.getInt(statusIndex)) {
           // Find the column which corresponds to the current file URI
           int uriIndex = cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
           // Retreive the temporary URI to where DownloadManager stored the file
@@ -126,8 +120,7 @@ public class MediaCache
 
           // Move the file
           Log.i(TAG, "Moving " + downloadFile + " to " + destinationFile);
-          if (downloadFile.renameTo(destinationFile))
-          {
+          if (downloadFile.renameTo(destinationFile)) {
             Log.i(TAG, destinationFile + " moved successfully");
           }
         }
@@ -139,16 +132,14 @@ public class MediaCache
    *  \return Returns true if the song is already cached, false otherwise.
    *  \param[in] songUid The unique ID as from Ampache.
    */
-  public boolean check_if_cached(long songUid) throws Exception
-  {
+  public boolean check_if_cached(long songUid) throws Exception {
     // Initially set to false. Will switch to true if we find the file.
     boolean cached = false;
     // Construct the path to check for the cached song
     File testFile = new File(cached_song_path(songUid));
 
     Log.i(TAG, "Checking if " + testFile + " exists.");
-    if (testFile.exists() == true)
-    {
+    if (testFile.exists() == true) {
       cached = true;
       Log.i(TAG, testFile + " exists.");
     }
@@ -160,8 +151,7 @@ public class MediaCache
    *  \return Returns a boolean indicating that the external storage does have cache
    *          space available.
    */
-  private boolean check_if_space_available()
-  {
+  private boolean check_if_space_available() {
     // Initially set to false. Will switch to true if we find available space.
     boolean spaceAvailable = false;
     // Collect the list of files currently in the cache directory
@@ -169,8 +159,7 @@ public class MediaCache
     Log.i(TAG, "check_if_space_available, current # of files cached: " + fileList.length);
 
     // If there is room left, return true
-    if (fileList.length < MAX_SONGS_CACHED)
-    {
+    if (fileList.length < MAX_SONGS_CACHED) {
       spaceAvailable = true;
     }
 
@@ -183,8 +172,7 @@ public class MediaCache
    *         song UID and converts that into a string for the file path.
    * \param[in] songUid the unique ID as from Ampache
    */
-  public String cached_song_path(long songUid)
-  {
+  public String cached_song_path(long songUid) {
     String path = mCacheDir.getAbsolutePath() + "/" + songUid;
     return path;
   }
