@@ -19,9 +19,12 @@ import java.io.File;
 
 public class MediaCache {
   private DownloadManager mDownloadManager;
+  /// This keeps track of the song being downloaded. When this is set to NO_DOWNLOAD_IN_PROGRESS
+  /// we can queue up another song. Otherwise, there is already a song being downloaded.
   private long mDownloadId;
   private Context mContext;
   private static final long MAX_SONGS_CACHED = 100; /// Maximum number of songs to cache
+  private static final long NO_DOWNLOAD_IN_PROGRESS = -1; /// We can queue up another download
   private File mCacheDir; /// Folder to store all of the local files
   private File mTempDownloadDir; /// Folder to temporarily store files while downloading
   private static final String TAG = "MediaCache"; /// Used for calls to Log
@@ -35,6 +38,7 @@ public class MediaCache {
   MediaCache (Context mCtxt) {
     mContext = mCtxt;
     mDownloadManager = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+    mDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Allow the system to cache another song initially
 
     // Setup the directory to store the cache on the external storage
     File externalMusicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
@@ -64,6 +68,12 @@ public class MediaCache {
   public void cache_song(long songUid, String songUrl) throws Exception {
     // If the song is already cached, we are already done
     if (check_if_cached(songUid) == true) {
+      return;
+    }
+
+    // Check to see if we already have a download running. Only cache one song at a time.
+    if (mDownloadId != NO_DOWNLOAD_IN_PROGRESS) {
+      Log.i(TAG, "cache_song returning, there is already a download in progress.");
       return;
     }
 
@@ -125,6 +135,9 @@ public class MediaCache {
           }
         }
       }
+
+      // Also set the mDownloadId to indicate that no download is in progress
+      mDownloadId = NO_DOWNLOAD_IN_PROGRESS;
     }
   }
 
