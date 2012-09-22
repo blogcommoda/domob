@@ -89,6 +89,10 @@ public class MediaCache {
     request.setDescription(String.valueOf(songUid));
     // Set the title incase we want to view the downloads in the download manager for debugging
     request.setTitle("Amdroid-" + String.valueOf(songUid));
+    // Normally, we don't want these downloads to appear in the UI or notifications
+    request.setVisibleInDownloadsUi(false);
+    // TODO: Buy a new phone that isn't stuck below API 11 :)
+    //request.setNotificationVisibility(VISIBILITY_HIDDEN);
     // Set the destination to the external device in the downloads directory
     request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
                                               "ampachetmp/" + songUid);
