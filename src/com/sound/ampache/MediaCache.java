@@ -87,6 +87,8 @@ public class MediaCache {
     Request request = new Request(Uri.parse(songUrl));
     // We can keep track of the Ampache song ID in the download description
     request.setDescription(String.valueOf(songUid));
+    // Set the title incase we want to view the downloads in the download manager for debugging
+    request.setTitle("Amdroid-" + String.valueOf(songUid));
     // Set the destination to the external device in the downloads directory
     request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
                                               "ampachetmp/" + songUid);
