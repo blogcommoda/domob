@@ -25,11 +25,16 @@ public class MediaCache {
   /// we can queue up another song. Otherwise, there is already a song being downloaded.
   private long mDownloadId;
   private Context mContext;
-  private static final long MAX_SONGS_CACHED = 100; /// Maximum number of songs to cache
-  private static final long NO_DOWNLOAD_IN_PROGRESS = -1; /// We can queue up another download
-  private File mCacheDir; /// Folder to store all of the local files
-  private File mTempDownloadDir; /// Folder to temporarily store files while downloading
-  private static final String TAG = "MediaCache"; /// Used for calls to Log
+  /// Maximum number of songs to cache
+  private static final long MAX_SONGS_CACHED = 100;
+  /// We can queue up another download
+  private static final long NO_DOWNLOAD_IN_PROGRESS = -1;
+  /// Folder to store all of the local files
+  private File mCacheDir;
+  /// Folder to temporarily store files while downloading
+  private File mTempDownloadDir;
+  /// Used for calls to Log
+  private static final String TAG = "MediaCache";
   /// Called when the download finishes. This calls our private method to actually do the work.
   BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver() {
     public void onReceive(Context context, Intent intent) {
