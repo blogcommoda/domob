@@ -69,7 +69,7 @@ public class MediaCache {
 
     // Setup the directory to store the cache on the external storage
     File externalMusicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
-    mCacheDir = new File(externalMusicDir.getAbsolutePath() + "/ampachecache");
+    mCacheDir = new File(externalMusicDir.getAbsolutePath() + "/amdroidcache");
     if (mCacheDir.exists() == false) {
       Log.i(TAG, mCacheDir + " does not exist, creating directory.");
       mCacheDir.mkdirs();
@@ -77,7 +77,7 @@ public class MediaCache {
 
     // Setup the directory to store the temporary DownloadManager files
     File externalDownloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-    mTempDownloadDir = new File(externalDownloadDir.getAbsolutePath() + "/ampachetmp");
+    mTempDownloadDir = new File(externalDownloadDir.getAbsolutePath() + "/amdroidtmp");
     if (mTempDownloadDir.exists() == false) {
       Log.i(TAG, mTempDownloadDir + " does not exist, creating directory.");
       mTempDownloadDir.mkdirs();
