@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.util.Log;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class MediaCache {
   private DownloadManager mDownloadManager;
@@ -183,6 +185,38 @@ public class MediaCache {
     }
 
     return spaceAvailable;
+  }
+
+  /** \brief This deletes the oldest files from the cache directory until there is room for another
+   *         song.
+   */
+  private void make_cache_space() {
+    File cacheFiles[] = mCacheDir.listFiles();
+
+    // Before doing anything else, return if there is room left.
+    if (cacheFiles.length < MAX_SONGS_CACHED) {
+      return;
+    }
+
+    // Sort the files by the data modified. Shamelessly borrowed from:
+    // http://stackoverflow.com/questions/203030/best-way-to-list-files-in-java-sorted-by-date-modified
+    Arrays.sort(cacheFiles, new Comparator<File>(){
+      public int compare(File f1, File f2) {
+        return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
+      }
+    });
+
+    // We want to remove the oldest files, which will be at the end of the array.
+    for (int x = 0; x < cacheFiles.length - MAX_SONGS_CACHED; x++) {
+      // For example, if the array is 30 long we want to initially delete slot 29.
+      int y = cacheFiles.length - x - 1;
+      Log.i(TAG, "make_cache_space, cacheFiles[" + y + "].lastModified=" + cacheFiles[y].lastModified());
+      if (cacheFiles[y].delete()) {
+        Log.i(TAG, "make_cache_space, successfully deleted " + cacheFiles[y].getAbsolutePath());
+      } else {
+        Log.i(TAG, "make_cache_space, failed to delete " + cacheFiles[y].getAbsolutePath());
+      }
+    }
   }
 
   /**
