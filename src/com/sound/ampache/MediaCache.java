@@ -82,6 +82,7 @@ public class MediaCache {
     // If the song is not cached, then we want to cache it. First check if there is room
     if (check_if_cache_space_available() == false) {
       Log.i(TAG, "check_if_space_available returned false. Clearing new space.");
+      make_cache_space();
     }
 
     Log.i(TAG, "Attempting to cache song ID " + songUid);
