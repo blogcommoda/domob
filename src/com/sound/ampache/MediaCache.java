@@ -80,8 +80,8 @@ public class MediaCache {
     }
 
     // If the song is not cached, then we want to cache it. First check if there is room
-    if (check_if_cache_space_available() == false) {
-      Log.i(TAG, "check_if_space_available returned false. Clearing new space.");
+    if (checkIfCacheSpaceAvailable() == false) {
+      Log.i(TAG, "checkIfCacheSpaceAvailable returned false. Clearing new space.");
       makeCacheSpace();
     }
 
@@ -174,12 +174,12 @@ public class MediaCache {
    *  \return Returns a boolean indicating that the external storage does have cache
    *          space available.
    */
-  private boolean check_if_cache_space_available() {
+  private boolean checkIfCacheSpaceAvailable() {
     // Initially set to false. Will switch to true if we find available space.
     boolean spaceAvailable = false;
     // Collect the list of files currently in the cache directory
     String fileList[] = mCacheDir.list();
-    Log.i(TAG, "check_if_space_available, current # of files cached: " + fileList.length);
+    Log.i(TAG, "checkIfCacheSpaceAvailable, current # of files cached: " + fileList.length);
 
     // If there is room left, return true
     if (fileList.length < MAX_SONGS_CACHED) {
