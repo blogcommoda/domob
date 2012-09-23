@@ -135,7 +135,7 @@ public class MediaCache {
           long ampacheSongUid = cur.getLong(descriptionIndex);
 
           // Setup the destination file
-          String destinationPath = cached_song_path(ampacheSongUid);
+          String destinationPath = cachedSongPath(ampacheSongUid);
           File destinationFile = new File(Uri.parse(destinationPath).getPath());
 
           // Move the file
@@ -159,7 +159,7 @@ public class MediaCache {
     // Initially set to false. Will switch to true if we find the file.
     boolean cached = false;
     // Construct the path to check for the cached song
-    File testFile = new File(cached_song_path(songUid));
+    File testFile = new File(cachedSongPath(songUid));
 
     Log.i(TAG, "Checking if " + testFile + " exists.");
     if (testFile.exists() == true) {
@@ -227,7 +227,7 @@ public class MediaCache {
    *         song UID and converts that into a string for the file path.
    * \param[in] songUid the unique ID as from Ampache
    */
-  public String cached_song_path(long songUid) {
+  public String cachedSongPath(long songUid) {
     String path = mCacheDir.getAbsolutePath() + "/" + songUid;
     return path;
   }
