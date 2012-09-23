@@ -33,7 +33,7 @@ public class MediaCache {
   /// Called when the download finishes. This calls our private method to actually do the work.
   BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver() {
     public void onReceive(Context context, Intent intent) {
-      download_complete(intent);
+      downloadComplete(intent);
     }
   };
 
@@ -67,15 +67,15 @@ public class MediaCache {
    *  \param[in] songUid The unique ID as from Ampache.
    *  \param[in] songUrl The actual live URL to download the track from Ampache.
    */
-  public void cache_song(long songUid, String songUrl) throws Exception {
+  public void cacheSong(long songUid, String songUrl) throws Exception {
     // If the song is already cached, we are already done
-    if (check_if_cached(songUid) == true) {
+    if (checkIfCached(songUid) == true) {
       return;
     }
 
     // Check to see if we already have a download running. Only cache one song at a time.
     if (mDownloadId != NO_DOWNLOAD_IN_PROGRESS) {
-      Log.i(TAG, "cache_song returning, there is already a download in progress.");
+      Log.i(TAG, "cacheSong returning, there is already a download in progress.");
       return;
     }
 
@@ -101,15 +101,15 @@ public class MediaCache {
                                               "ampachetmp/" + songUid);
     // Queue up the request
     mDownloadId = mDownloadManager.enqueue(request);
-    Log.i(TAG, "cache_song queued download request mDownloadId=" + mDownloadId);
+    Log.i(TAG, "cacheSong queued download request mDownloadId=" + mDownloadId);
   }
 
   /** \brief Handle the song finished download.
    *
    */
-  private void download_complete(Intent intent) {
+  private void downloadComplete(Intent intent) {
     String action = intent.getAction();
-    Log.i(TAG, "In download_complete method, action: " + action);
+    Log.i(TAG, "In downloadComplete method, action: " + action);
     // Check to see if the action corresponds to a completed download
     if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
       // Query for more info using the ID
@@ -155,7 +155,7 @@ public class MediaCache {
    *  \return Returns true if the song is already cached, false otherwise.
    *  \param[in] songUid The unique ID as from Ampache.
    */
-  public boolean check_if_cached(long songUid) throws Exception {
+  public boolean checkIfCached(long songUid) throws Exception {
     // Initially set to false. Will switch to true if we find the file.
     boolean cached = false;
     // Construct the path to check for the cached song
