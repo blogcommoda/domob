@@ -403,10 +403,10 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
             Log.i("Amdroid", "Song URL     - " + chosen.url );
             Log.i("Amdroid", "Song URL (C) - " + chosen.liveUrl() );
             // Check to see if the file is already cached
-            if (mMediaCache.check_if_cached(Long.valueOf(chosen.id)) == true)
+            if (mMediaCache.checkIfCached(Long.valueOf(chosen.id)) == true)
             {
               Log.i("Amdroid", "Playing Song ID " + chosen.id + "from local cache.");
-              amdroid.mp.setDataSource(mMediaCache.cached_song_path(Long.valueOf(chosen.id)));
+              amdroid.mp.setDataSource(mMediaCache.cachedSongPath(Long.valueOf(chosen.id)));
               amdroid.mp.prepareAsync();
               prepared = false;
             }
@@ -417,8 +417,8 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
               amdroid.mp.prepareAsync();
               prepared = false;
               // Just testing file caching. We really don't want to cache the
-              // song currently playing. TODO: delete
-              mMediaCache.cache_song(Long.valueOf(chosen.id), chosen.liveUrl());
+              // song currently playing. TODO: Cache future songs
+              mMediaCache.cacheSong(Long.valueOf(chosen.id), chosen.liveUrl());
             }
         } catch (Exception blah) {
             Log.i("Amdroid", "Tried to get the song but couldn't...sorry D:");
