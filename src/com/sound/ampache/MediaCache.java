@@ -82,7 +82,7 @@ public class MediaCache {
     // If the song is not cached, then we want to cache it. First check if there is room
     if (check_if_cache_space_available() == false) {
       Log.i(TAG, "check_if_space_available returned false. Clearing new space.");
-      make_cache_space();
+      makeCacheSpace();
     }
 
     Log.i(TAG, "Attempting to cache song ID " + songUid);
@@ -192,7 +192,7 @@ public class MediaCache {
   /** \brief This deletes the oldest files from the cache directory until there is room for another
    *         song.
    */
-  private void make_cache_space() {
+  private void makeCacheSpace() {
     File cacheFiles[] = mCacheDir.listFiles();
 
     // Before doing anything else, return if there is room left.
@@ -212,11 +212,11 @@ public class MediaCache {
     for (int x = 0; x < cacheFiles.length - MAX_SONGS_CACHED; x++) {
       // For example, if the array is 30 long we want to initially delete slot 29.
       int y = cacheFiles.length - x - 1;
-      Log.i(TAG, "make_cache_space, cacheFiles[" + y + "].lastModified=" + cacheFiles[y].lastModified());
+      Log.i(TAG, "makeCacheSpace, cacheFiles[" + y + "].lastModified=" + cacheFiles[y].lastModified());
       if (cacheFiles[y].delete()) {
-        Log.i(TAG, "make_cache_space, successfully deleted " + cacheFiles[y].getAbsolutePath());
+        Log.i(TAG, "makeCacheSpace, successfully deleted " + cacheFiles[y].getAbsolutePath());
       } else {
-        Log.i(TAG, "make_cache_space, failed to delete " + cacheFiles[y].getAbsolutePath());
+        Log.i(TAG, "makeCacheSpace, failed to delete " + cacheFiles[y].getAbsolutePath());
       }
     }
   }
