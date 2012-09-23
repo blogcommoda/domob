@@ -91,7 +91,7 @@ public class MediaCache {
     // We can keep track of the Ampache song ID in the download description
     request.setDescription(String.valueOf(songUid));
     // Set the title incase we want to view the downloads in the download manager for debugging
-    request.setTitle("Amdroid-" + String.valueOf(songUid));
+    request.setTitle("Amdroid caching song");
     // Normally, we don't want these downloads to appear in the UI or notifications
     request.setVisibleInDownloadsUi(false);
     // TODO: Buy a new phone that isn't stuck below API 11 :)
@@ -101,14 +101,15 @@ public class MediaCache {
                                               "ampachetmp/" + songUid);
     // Queue up the request
     mDownloadId = mDownloadManager.enqueue(request);
+    Log.i(TAG, "cache_song queued download request mDownloadId=" + mDownloadId);
   }
 
   /** \brief Handle the song finished download.
    *
    */
   private void download_complete(Intent intent) {
-    Log.i(TAG, "In download_complete method");
     String action = intent.getAction();
+    Log.i(TAG, "In download_complete method, action: " + action);
     // Check to see if the action corresponds to a completed download
     if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
       // Query for more info using the ID
