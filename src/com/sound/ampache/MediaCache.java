@@ -25,6 +25,7 @@ import android.app.DownloadManager.Query;
 import android.app.DownloadManager.Request;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.app.Activity;
@@ -68,16 +69,16 @@ public class MediaCache {
     mDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Allow the system to cache another song initially
 
     // Setup the directory to store the cache on the external storage
-    File externalMusicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
-    mCacheDir = new File(externalMusicDir.getAbsolutePath() + "/amdroidcache");
+    File externalMusicDir = mContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+    mCacheDir = new File(externalMusicDir.getAbsolutePath());
     if (mCacheDir.exists() == false) {
       Log.i(TAG, mCacheDir + " does not exist, creating directory.");
       mCacheDir.mkdirs();
     }
 
     // Setup the directory to store the temporary DownloadManager files
-    File externalDownloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-    mTempDownloadDir = new File(externalDownloadDir.getAbsolutePath() + "/amdroidtmp");
+    File externalDownloadDir = mContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+    mTempDownloadDir = new File(externalDownloadDir.getAbsolutePath());
     if (mTempDownloadDir.exists() == false) {
       Log.i(TAG, mTempDownloadDir + " does not exist, creating directory.");
       mTempDownloadDir.mkdirs();
@@ -122,8 +123,8 @@ public class MediaCache {
     // TODO: Buy a new phone that isn't stuck below API 11 :)
     //request.setNotificationVisibility(VISIBILITY_HIDDEN);
     // Set the destination to the external device in the downloads directory
-    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
-                                              "ampachetmp/" + songUid);
+    request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS,
+                                             String.valueOf(songUid));
     // Queue up the request
     mDownloadId = mDownloadManager.enqueue(request);
     Log.i(TAG, "cacheSong queued download request mDownloadId=" + mDownloadId);
