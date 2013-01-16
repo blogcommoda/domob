@@ -44,6 +44,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import com.sound.ampache.staticMedia.MediaPlayerControl;
 import com.sound.ampache.objects.Song;
+import com.sound.ampache.MediaCache;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.widget.Toast;
@@ -70,6 +71,8 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
 
     private Boolean albumArtEnabled = false;
 
+    private MediaCache mMediaCache; ///Used to cache songs locally
+
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -80,7 +83,9 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
         amdroid.mp.setOnBufferingUpdateListener(this);
         amdroid.mp.setOnCompletionListener(this);
         mc = new staticMedia(this);
-     
+
+        mMediaCache = new MediaCache(getApplicationContext());
+
         amdroid.mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mp) {
                     amdroid.mp.start();
@@ -397,9 +402,24 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
         try {
             Log.i("Amdroid", "Song URL     - " + chosen.url );
             Log.i("Amdroid", "Song URL (C) - " + chosen.liveUrl() );
-            amdroid.mp.setDataSource(chosen.liveUrl());
-            amdroid.mp.prepareAsync();
-            prepared = false;
+            // Check to see if the file is already cached
+            if (mMediaCache.checkIfCached(Long.valueOf(chosen.id)) == true)
+            {
+              Log.i("Amdroid", "Playing Song ID " + chosen.id + "from local cache.");
+              amdroid.mp.setDataSource(mMediaCache.cachedSongPath(Long.valueOf(chosen.id)));
+              amdroid.mp.prepareAsync();
+              prepared = false;
+            }
+            else
+            {
+              Log.i("Amdroid", "Song ID " + chosen.id + " has not been cached yet.");
+              amdroid.mp.setDataSource(chosen.liveUrl());
+              amdroid.mp.prepareAsync();
+              prepared = false;
+              // Just testing file caching. We really don't want to cache the
+              // song currently playing. TODO: Cache future songs
+              mMediaCache.cacheSong(Long.valueOf(chosen.id), chosen.liveUrl());
+            }
         } catch (Exception blah) {
             Log.i("Amdroid", "Tried to get the song but couldn't...sorry D:");
             return;
