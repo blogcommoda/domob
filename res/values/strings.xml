@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Amdroid</string>
-    <string name="prefs_name">Amdroid Preferences</string>
+    <string name="app_name">domob</string>
+    <string name="prefs_name">domob Preferences</string>
     <string name="play_name">Now Playing</string>
     <string name="server_preferences">Ampache Server</string>
     <string name="title_server_preference">Ampache Url</string>
