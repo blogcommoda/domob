@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
  *
@@ -25,7 +25,7 @@ import java.io.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import java.util.ArrayList;
-import com.sound.ampache.objects.*;
+import com.nullsink.domob.objects.*;
 import android.content.SharedPreferences;
 import android.content.Context;
 import android.preference.PreferenceManager;

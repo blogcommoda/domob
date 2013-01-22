@@ -2,10 +2,10 @@
 //
 // This file lays out all of the Remote Procedure Calls exposed by the playerService
 
-package com.sound.ampache;
+package com.nullsink.domob;
 
 //Special types that we're using
-import com.sound.ampache.objects.Song;
+import com.nullsink.domob.objects.Song;
 
 interface IPlayerService {
     boolean isPlaying();

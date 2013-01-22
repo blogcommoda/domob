@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2008-2009 Kevin James Purdy <purdyk@gmail.com>
  *                                                             
@@ -34,7 +34,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.widget.Toast;
 import android.widget.ListView;
-import com.sound.ampache.objects.*;
+import com.nullsink.domob.objects.*;
 import java.util.ArrayList;
 import java.net.URLEncoder;
 

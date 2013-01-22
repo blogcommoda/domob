@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2008 Kevin James Purdy  <purdyk@onid.orst.edu >
  * Copyright (c) 2010 Jacob Alexander    < haata@users.sf.net  >
@@ -22,7 +22,7 @@ package com.sound.ampache;
  * +------------------------------------------------------------------------+
  */
 
-import com.sound.ampache.R;
+import com.nullsink.domob.R;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.os.Bundle;

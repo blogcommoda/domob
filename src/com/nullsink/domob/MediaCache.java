@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2012 Ed Baker <edward.david.baker@gmail.com>
  *

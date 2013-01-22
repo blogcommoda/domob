@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2008-2009 Kevin James Purdy <purdyk@gmail.com>                                              
  *                                                                                                           

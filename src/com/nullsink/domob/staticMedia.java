@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 import android.widget.ProgressBar;
 import android.widget.TextView;

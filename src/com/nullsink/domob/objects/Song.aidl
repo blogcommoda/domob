@@ -1,3 +1,3 @@
-package com.sound.ampache.objects;
+package com.nullsink.domob.objects;
 
 parcelable Song;

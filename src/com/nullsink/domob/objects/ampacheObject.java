@@ -1,4 +1,4 @@
-package com.sound.ampache.objects;
+package com.nullsink.domob.objects;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
  *

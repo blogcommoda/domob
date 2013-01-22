@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2008-2009 Kevin James Purdy <purdyk@gmail.com>                                              
  *                                                                                                           
@@ -27,7 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import com.sound.ampache.objects.*;
+import com.nullsink.domob.objects.*;
 import android.os.Bundle;
 import java.util.ArrayList;
 

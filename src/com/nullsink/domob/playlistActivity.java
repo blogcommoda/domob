@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
  * Copyright (c) 2010 Jacob Alexander   < haata@users.sf.net >
@@ -42,9 +42,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import com.sound.ampache.staticMedia.MediaPlayerControl;
-import com.sound.ampache.objects.Song;
-import com.sound.ampache.MediaCache;
+import com.nullsink.domob.staticMedia.MediaPlayerControl;
+import com.nullsink.domob.objects.Song;
+import com.nullsink.domob.MediaCache;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.widget.Toast;

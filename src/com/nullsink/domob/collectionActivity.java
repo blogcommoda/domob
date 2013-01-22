@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2008-2009 Kevin James Purdy <purdyk@gmail.com   >
  * Copyright (c) 2009      Jacob Alexander   < haata@users.sf.net>
@@ -48,7 +48,7 @@ import android.view.Window;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.*;
-import com.sound.ampache.objects.*;
+import com.nullsink.domob.objects.*;
 import java.lang.Integer;
 
 public final class collectionActivity extends ListActivity implements OnItemLongClickListener 
