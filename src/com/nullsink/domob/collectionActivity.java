@@ -74,15 +74,15 @@ public final class collectionActivity extends ListActivity implements OnItemLong
         //Debug.waitForDebugger();
 
         // We've tried to login, and failed, so present the user with the preferences pane
-        if (amdroid.comm.authToken == null || amdroid.comm.authToken.equals("")) {
-            Toast.makeText(this, "Login Failed: " + amdroid.comm.lastErr, Toast.LENGTH_LONG).show();
+        if (domob.comm.authToken == null || domob.comm.authToken.equals("")) {
+            Toast.makeText(this, "Login Failed: " + domob.comm.lastErr, Toast.LENGTH_LONG).show();
             Intent prefsIntent = new Intent().setClass(this, prefsActivity.class);
             startActivity(prefsIntent);
             return;
         }
 
         // Verify a valid session.
-        amdroid.comm.ping();
+        domob.comm.ping();
 
         Intent intent = getIntent();
 
@@ -107,8 +107,8 @@ public final class collectionActivity extends ListActivity implements OnItemLong
         list = savedInstanceState != null ? (ArrayList) savedInstanceState.getParcelableArrayList("list") : null;
 
         // Maybe we have the cache already?
-        if (amdroid.cache.containsKey(directive[0])) { 
-            list = amdroid.cache.getParcelableArrayList(directive[0]); 
+        if (domob.cache.containsKey(directive[0])) { 
+            list = domob.cache.getParcelableArrayList(directive[0]); 
         }
 
         // If not, queue up a data fetch
@@ -116,7 +116,7 @@ public final class collectionActivity extends ListActivity implements OnItemLong
             isFetching = true;
             //Tell them we're loading
 
-            //ampacheRequest req = amdroid.comm.new ampacheRequest(directive[0], directive[1], this);
+            //ampacheRequest req = domob.comm.new ampacheRequest(directive[0], directive[1], this);
             Message requestMsg = new Message();
 
             requestMsg.arg1 = 0;
@@ -125,16 +125,16 @@ public final class collectionActivity extends ListActivity implements OnItemLong
             /* we want incremental pulls for the large ones */
             if (directive[0].equals("artists")) {
                 setProgressBarVisibility(true);
-                list = new ArrayList(amdroid.comm.artists);
-                requestMsg.arg2 = amdroid.comm.artists;
+                list = new ArrayList(domob.comm.artists);
+                requestMsg.arg2 = domob.comm.artists;
             } else if (directive[0].equals("albums")) {
                 setProgressBarVisibility(true);
-                list = new ArrayList(amdroid.comm.albums);
-                requestMsg.arg2 = amdroid.comm.albums;
+                list = new ArrayList(domob.comm.albums);
+                requestMsg.arg2 = domob.comm.albums;
             } else if (directive[0].equals("songs")) {
                 setProgressBarVisibility(true);
-                list = new ArrayList(amdroid.comm.songs);
-                requestMsg.arg2 = amdroid.comm.songs;
+                list = new ArrayList(domob.comm.songs);
+                requestMsg.arg2 = domob.comm.songs;
             } else {
                 list = new ArrayList();
                 requestMsg.what = 0x1337;
@@ -146,7 +146,7 @@ public final class collectionActivity extends ListActivity implements OnItemLong
 
             //tell it how to handle the stuff
             requestMsg.replyTo = new Messenger (this.dataReadyHandler);
-            amdroid.requestHandler.incomingRequestHandler.sendMessage(requestMsg);
+            domob.requestHandler.incomingRequestHandler.sendMessage(requestMsg);
             dataReadyHandler.ca = new collectionAdapter(this, R.layout.browsable_item, list);
             setListAdapter(dataReadyHandler.ca);
         } else {
@@ -186,7 +186,7 @@ public final class collectionActivity extends ListActivity implements OnItemLong
             dataReadyHandler.removeMessages(0x1336);
             dataReadyHandler.removeMessages(0x1337);
             dataReadyHandler.stop = true;
-            amdroid.requestHandler.stop = true;
+            domob.requestHandler.stop = true;
         }
     }
 
@@ -199,9 +199,9 @@ public final class collectionActivity extends ListActivity implements OnItemLong
             requestMsg.what = 0x1339;
             //tell it how to handle the stuff
             requestMsg.replyTo = new Messenger(dataReadyHandler);
-            amdroid.requestHandler.incomingRequestHandler.sendMessage(requestMsg);
+            domob.requestHandler.incomingRequestHandler.sendMessage(requestMsg);
         } else {
-            amdroid.playlistCurrent.add((Song) cur);
+            domob.playlistCurrent.add((Song) cur);
         }
         return true;
     }
@@ -213,7 +213,7 @@ public final class collectionActivity extends ListActivity implements OnItemLong
         Intent intent = new Intent().setClass(this, collectionActivity.class);
         if (val.getType().equals("Song")) {
             Toast.makeText(this, "Enqueue " + val.getType() + ": " + val.toString(), Toast.LENGTH_LONG).show();
-            amdroid.playlistCurrent.add((Song) val);
+            domob.playlistCurrent.add((Song) val);
             return;
         } else {
             String[] dir = {val.childString(), val.id};
@@ -249,13 +249,13 @@ public final class collectionActivity extends ListActivity implements OnItemLong
                     requestMsg.arg1 = msg.arg1 + 100;
                     requestMsg.arg2 = msg.arg2;
                     requestMsg.replyTo = new Messenger (this);
-                    amdroid.requestHandler.incomingRequestHandler.sendMessage(requestMsg);
+                    domob.requestHandler.incomingRequestHandler.sendMessage(requestMsg);
                     ca.notifyDataSetChanged();
                     collectionActivity.this.setProgress((10000 * msg.arg1) / msg.arg2);
                 } else {
                     /* we've completed incremental fetch, cache it baby! */
                     ca.notifyDataSetChanged();
-                    amdroid.cache.putParcelableArrayList(directive[0], list);
+                    domob.cache.putParcelableArrayList(directive[0], list);
                     collectionActivity.this.setProgress(10000);
                     getListView().setTextFilterEnabled(true);
                     isFetching = false;
@@ -276,7 +276,7 @@ public final class collectionActivity extends ListActivity implements OnItemLong
                 break;
             case (0x1339):
                 /* handle playlist enqueues */
-                amdroid.playlistCurrent.addAll((ArrayList) msg.obj);
+                domob.playlistCurrent.addAll((ArrayList) msg.obj);
                 break;
             }
         }

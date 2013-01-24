@@ -78,18 +78,18 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
         super.onCreate(savedInstanceState);
         
         /* make sure we're authenticated */
-        amdroid.comm.ping();
+        domob.comm.ping();
 
-        amdroid.mp.setOnBufferingUpdateListener(this);
-        amdroid.mp.setOnCompletionListener(this);
+        domob.mp.setOnBufferingUpdateListener(this);
+        domob.mp.setOnCompletionListener(this);
         mc = new staticMedia(this);
 
         mMediaCache = new MediaCache(getApplicationContext());
 
-        amdroid.mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        domob.mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mp) {
-                    amdroid.mp.start();
-                    if (amdroid.playListVisible) {
+                    domob.mp.start();
+                    if (domob.playListVisible) {
                         mc.setEnabled(true);
                         mc.show();
                         prepared = true;
@@ -116,10 +116,10 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
         artView = (ImageView)findViewById(R.id.picview);
 
         // Load Album Art on Entry, currently SLOOOOOOW so TODO
-        //if ( amdroid.playlistCurrent.size() > 0 )
+        //if ( domob.playlistCurrent.size() > 0 )
         //    loadAlbumArt();
 
-        if (amdroid.mp.isPlaying()) {
+        if (domob.mp.isPlaying()) {
             mc.setEnabled(true);
             mc.show();
         } else {
@@ -139,37 +139,37 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
     private void nextInPlaylist() {
         if ( shuffleEnabled ) {
             // So we don't play a song more than once
-            if ( !shuffleHistory.contains( amdroid.playingIndex ) )
-                shuffleHistory.add( amdroid.playingIndex );
+            if ( !shuffleHistory.contains( domob.playingIndex ) )
+                shuffleHistory.add( domob.playingIndex );
 
             // Just played the last song, repeat if repeat is enabled, stop otherwise
-            if ( shuffleHistory.size() >= amdroid.playlistCurrent.size() && repeatEnabled )
+            if ( shuffleHistory.size() >= domob.playlistCurrent.size() && repeatEnabled )
                 shuffleHistory.clear();
             else
-                amdroid.playingIndex = amdroid.playlistCurrent.size();
+                domob.playingIndex = domob.playlistCurrent.size();
 
             int next = 0;
             Random rand = new Random();
 
             // Try random numbers until finding one that is not used
             do {
-                next = rand.nextInt( amdroid.playlistCurrent.size() );
+                next = rand.nextInt( domob.playlistCurrent.size() );
             } while ( shuffleHistory.contains( next ) );
 
             // Set next playing index
-            amdroid.playingIndex = next;
+            domob.playingIndex = next;
         } else {
-            amdroid.playingIndex++;
+            domob.playingIndex++;
 
             // Reset playlist to beginning if repeat is enabled
-            if ( amdroid.playingIndex >= amdroid.playlistCurrent.size() && repeatEnabled )
-                amdroid.playingIndex = 0;
+            if ( domob.playingIndex >= domob.playlistCurrent.size() && repeatEnabled )
+                domob.playingIndex = 0;
         }
     }
 
     private void prevInPlaylist() {
         if ( shuffleEnabled ) {
-            int currIndex = shuffleHistory.indexOf( amdroid.playingIndex );
+            int currIndex = shuffleHistory.indexOf( domob.playingIndex );
 
             // Call a random next song if this is the first song
             if ( shuffleHistory.size() < 1 ) {
@@ -181,21 +181,21 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
             // Previous (Current item is not in the shuffle history)
             if ( currIndex == -1 ) {
                 // Set previous song
-                amdroid.playingIndex = (Integer)shuffleHistory.get( shuffleHistory.size() - 1 );
+                domob.playingIndex = (Integer)shuffleHistory.get( shuffleHistory.size() - 1 );
 
                 // Remove item, I consider Previous like an undo
                 shuffleHistory.remove( shuffleHistory.size() - 1 );
             }
             // This shouldn't be possible, but...
             else if ( currIndex > 0 ) {
-                amdroid.playingIndex = (Integer)shuffleHistory.get( currIndex - 1 );
+                domob.playingIndex = (Integer)shuffleHistory.get( currIndex - 1 );
 
                 shuffleHistory.remove( currIndex );
             }
         }
         // Do not call previous if it is the first song
-        else if ( amdroid.playingIndex > 0 )
-            amdroid.playingIndex--;
+        else if ( domob.playingIndex > 0 )
+            domob.playingIndex--;
     }
 
     /* on pause and on resume make sure that we don't attempt to display the MediaController when 
@@ -203,13 +203,13 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
     @Override
     protected void onResume() {
         super.onResume();
-        amdroid.playListVisible = true;
+        domob.playListVisible = true;
     }
     
     @Override
     protected void onPause() {
         super.onResume();
-        amdroid.playListVisible = false;
+        domob.playListVisible = false;
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -223,8 +223,8 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
         switch (item.getItemId()) {
         case R.id.pl_clear:
             if (isPlaying())
-                amdroid.mp.stop();
-            amdroid.playingIndex = 0;
+                domob.mp.stop();
+            domob.playingIndex = 0;
             pla.clearItems();
             mc.setEnabled(false);
             break;
@@ -233,7 +233,7 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
             try {
                 FileOutputStream pout = openFileOutput("playlist", 0);
                 ObjectOutputStream pos = new ObjectOutputStream(pout);
-                pos.writeObject(amdroid.playlistCurrent);
+                pos.writeObject(domob.playlistCurrent);
                 pout.close();
             } catch (Exception poo) {
                 Toast.makeText(this, "Error: " + poo.toString(), Toast.LENGTH_LONG).show();
@@ -242,13 +242,13 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
 
         case R.id.pl_load:
             if (isPlaying())
-                amdroid.mp.stop();
-            amdroid.playingIndex = 0;
+                domob.mp.stop();
+            domob.playingIndex = 0;
             mc.setEnabled(false);
             try {
                 FileInputStream pin = openFileInput("playlist");
                 ObjectInputStream poin = new ObjectInputStream(pin);
-                amdroid.playlistCurrent = (ArrayList<Song>) poin.readObject();
+                domob.playlistCurrent = (ArrayList<Song>) poin.readObject();
                 pin.close();
             } catch (Exception poo) {
                 Toast.makeText(this, "Error: " + poo.toString(), Toast.LENGTH_LONG).show();
@@ -303,10 +303,10 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
 
     private void loadAlbumArt()
     {
-        Song chosen = (Song) amdroid.playlistCurrent.get(amdroid.playingIndex);
+        Song chosen = (Song) domob.playlistCurrent.get(domob.playingIndex);
 
-        Log.i("Amdroid", "Art URL     - " + chosen.art );
-        Log.i("Amdroid", "Art URL (C) - " + chosen.liveArt() );
+        Log.i("domob", "Art URL     - " + chosen.art );
+        Log.i("domob", "Art URL (C) - " + chosen.liveArt() );
 
         try {
             URL artUrl = new URL( chosen.liveArt() );
@@ -324,72 +324,72 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
             */
 
         } catch ( MalformedURLException e ) {
-            Log.i("Amdroid", "Album Art URL sucks! Try something else.");
+            Log.i("domob", "Album Art URL sucks! Try something else.");
         } catch ( IOException e ) {
-            Log.i("Amdroid", "Teh interwebs died...");
+            Log.i("domob", "Teh interwebs died...");
         }
     }
 
     /* callbacks for the MediaPlayer and MediaController */
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        amdroid.bufferPC = percent;
+        domob.bufferPC = percent;
     }
 
     public int getBufferPercentage() {
-        return amdroid.bufferPC;
+        return domob.bufferPC;
     }
 
     public int getCurrentPosition() {
-        if (amdroid.mp.isPlaying()) {
-            return amdroid.mp.getCurrentPosition();
+        if (domob.mp.isPlaying()) {
+            return domob.mp.getCurrentPosition();
         }
         return 0;
     }
 
     public int getDuration() {
-        if (amdroid.mp.isPlaying()) {
-            return amdroid.mp.getDuration();
+        if (domob.mp.isPlaying()) {
+            return domob.mp.getDuration();
         }
         return 0;
     }
 
     public boolean isPlaying() {
-        return amdroid.mp.isPlaying();
+        return domob.mp.isPlaying();
     }
 
     public void pause() {
-        if (amdroid.mp.isPlaying()) {
-            amdroid.mp.pause();
+        if (domob.mp.isPlaying()) {
+            domob.mp.pause();
         }
     }
 
     public void seekTo(int pos) {
-        if (amdroid.mp.isPlaying()) {
-            amdroid.mp.seekTo(pos);
+        if (domob.mp.isPlaying()) {
+            domob.mp.seekTo(pos);
         }
     }
 
     public void start() {
-        amdroid.mp.start();
+        domob.mp.start();
     }
 
     public void play() {
-        if (amdroid.playingIndex >= amdroid.playlistCurrent.size()) {
-            amdroid.playingIndex = amdroid.playlistCurrent.size();
+        if (domob.playingIndex >= domob.playlistCurrent.size()) {
+            domob.playingIndex = domob.playlistCurrent.size();
             mc.setEnabled(false);
             return;
         }
 
-        if (amdroid.playingIndex < 0) {
-            amdroid.playingIndex = 0;
+        if (domob.playingIndex < 0) {
+            domob.playingIndex = 0;
             mc.setEnabled(false);
             return;
         }
 
-        Song chosen = (Song) amdroid.playlistCurrent.get(amdroid.playingIndex);
+        Song chosen = (Song) domob.playlistCurrent.get(domob.playingIndex);
 
-        if (amdroid.mp.isPlaying()) {
-            amdroid.mp.stop();
+        if (domob.mp.isPlaying()) {
+            domob.mp.stop();
         }
 
         // Only load album art if requested
@@ -398,30 +398,30 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
             loadAlbumArt();
         }
 
-        amdroid.mp.reset();
+        domob.mp.reset();
         try {
-            Log.i("Amdroid", "Song URL     - " + chosen.url );
-            Log.i("Amdroid", "Song URL (C) - " + chosen.liveUrl() );
+            Log.i("domob", "Song URL     - " + chosen.url );
+            Log.i("domob", "Song URL (C) - " + chosen.liveUrl() );
             // Check to see if the file is already cached
             if (mMediaCache.checkIfCached(Long.valueOf(chosen.id)) == true)
             {
-              Log.i("Amdroid", "Playing Song ID " + chosen.id + "from local cache.");
-              amdroid.mp.setDataSource(mMediaCache.cachedSongPath(Long.valueOf(chosen.id)));
-              amdroid.mp.prepareAsync();
+              Log.i("domob", "Playing Song ID " + chosen.id + "from local cache.");
+              domob.mp.setDataSource(mMediaCache.cachedSongPath(Long.valueOf(chosen.id)));
+              domob.mp.prepareAsync();
               prepared = false;
             }
             else
             {
-              Log.i("Amdroid", "Song ID " + chosen.id + " has not been cached yet.");
-              amdroid.mp.setDataSource(chosen.liveUrl());
-              amdroid.mp.prepareAsync();
+              Log.i("domob", "Song ID " + chosen.id + " has not been cached yet.");
+              domob.mp.setDataSource(chosen.liveUrl());
+              domob.mp.prepareAsync();
               prepared = false;
               // Just testing file caching. We really don't want to cache the
               // song currently playing. TODO: Cache future songs
               mMediaCache.cacheSong(Long.valueOf(chosen.id), chosen.liveUrl());
             }
         } catch (Exception blah) {
-            Log.i("Amdroid", "Tried to get the song but couldn't...sorry D:");
+            Log.i("domob", "Tried to get the song but couldn't...sorry D:");
             return;
         }
         turnOnPlayingView();
@@ -429,8 +429,8 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
 
     /* These functions help with displaying the |> icon next to the currently playing song */
     private void turnOffPlayingView() {
-        if (amdroid.playingIndex >= lv.getFirstVisiblePosition() && amdroid.playingIndex <= lv.getLastVisiblePosition()) {
-            View holder = lv.getChildAt(amdroid.playingIndex - lv.getFirstVisiblePosition());
+        if (domob.playingIndex >= lv.getFirstVisiblePosition() && domob.playingIndex <= lv.getLastVisiblePosition()) {
+            View holder = lv.getChildAt(domob.playingIndex - lv.getFirstVisiblePosition());
             if (holder != null) {
                 ImageView img = (ImageView) holder.findViewById(R.id.art);
                 img.setVisibility(View.INVISIBLE);
@@ -439,8 +439,8 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
     }
 
     private void turnOnPlayingView() {
-        if (amdroid.playingIndex >= lv.getFirstVisiblePosition() && amdroid.playingIndex <= lv.getLastVisiblePosition()) {
-            View holder = lv.getChildAt(amdroid.playingIndex - lv.getFirstVisiblePosition());
+        if (domob.playingIndex >= lv.getFirstVisiblePosition() && domob.playingIndex <= lv.getLastVisiblePosition()) {
+            View holder = lv.getChildAt(domob.playingIndex - lv.getFirstVisiblePosition());
             if (holder != null) {
                 ImageView img = (ImageView) holder.findViewById(R.id.art);
                 img.setVisibility(View.VISIBLE);
@@ -457,7 +457,7 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
     public void onItemClick(AdapterView l, View v, int position, long id) {
         if (prepared) {
             turnOffPlayingView();
-            amdroid.playingIndex = position;
+            domob.playingIndex = position;
             play();
         }
     }
@@ -492,7 +492,7 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
 
     private void centerList ( int adjust )
     {
-            lv.setSelection( amdroid.playingIndex + adjust );
+            lv.setSelection( domob.playingIndex + adjust );
     }
 
     private class playlistAdapter extends BaseAdapter
@@ -504,11 +504,11 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
         }
 
         public int getCount() {
-            return amdroid.playlistCurrent.size();
+            return domob.playlistCurrent.size();
         }
 
         public Object getItem(int position) {
-            return amdroid.playlistCurrent.get(position);
+            return domob.playlistCurrent.get(position);
         }
 
         public long getItemId(int position) {
@@ -520,13 +520,13 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
         }
 
         public void clearItems() {
-            amdroid.playlistCurrent.clear();
+            domob.playlistCurrent.clear();
             notifyDataSetChanged();
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
             plI holder;
-            Song cur = amdroid.playlistCurrent.get(position);
+            Song cur = domob.playlistCurrent.get(position);
 
             /* we don't reuse */
             if (convertView == null) {
@@ -544,7 +544,7 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
 
             holder.title.setText(cur.name);
             holder.other.setText(cur.extraString());
-            if (amdroid.mp.isPlaying() && amdroid.playingIndex == position) {
+            if (domob.mp.isPlaying() && domob.playingIndex == position) {
                 holder.art.setVisibility(View.VISIBLE);
             } else {
                 holder.art.setVisibility(View.INVISIBLE);

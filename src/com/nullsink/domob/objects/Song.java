@@ -56,12 +56,12 @@ public class Song extends ampacheObject implements Externalizable {
 
     /* Replace the old session id with our current one */
     public String liveUrl() {
-        return url.replaceAll("sid=[^&]+","sid=" + com.nullsink.domob.amdroid.comm.authToken).replaceFirst(".ogg$", ".mp3");
+        return url.replaceAll("sid=[^&]+","sid=" + com.nullsink.domob.domob.comm.authToken).replaceFirst(".ogg$", ".mp3");
     }
 
     /* Replace old session id, to use with the Album Art */
     public String liveArt() {
-        return art.replaceAll("auth=[^&]+","auth=" + com.nullsink.domob.amdroid.comm.authToken);
+        return art.replaceAll("auth=[^&]+","auth=" + com.nullsink.domob.domob.comm.authToken);
     }
     
     public boolean hasChildren() {

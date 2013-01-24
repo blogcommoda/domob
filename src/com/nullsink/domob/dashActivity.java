@@ -61,11 +61,11 @@ public class dashActivity extends Activity implements OnClickListener {
         findViewById(R.id.nowplaying).setOnClickListener(this);
         
         /* Verify a valid session */
-        //amdroid.comm.ping();
+        //domob.comm.ping();
 
         /*  We've tried to login, and failed, so present the user with the preferences pane */
-        if (amdroid.comm.authToken.equals("") || amdroid.comm.authToken == null) {
-            Toast.makeText(this, "Login Failed: " + amdroid.comm.lastErr, Toast.LENGTH_LONG).show();
+        if (domob.comm.authToken.equals("") || domob.comm.authToken == null) {
+            Toast.makeText(this, "Login Failed: " + domob.comm.lastErr, Toast.LENGTH_LONG).show();
             Intent prefsIntent = new Intent().setClass(this, prefsActivity.class);
             startActivity(prefsIntent);
             return;
@@ -81,10 +81,10 @@ public class dashActivity extends Activity implements OnClickListener {
         TextView st = (TextView) findViewById(R.id.title);
         String title = "";
         try {
-            if (amdroid.mp.isPlaying()) {
-                title = "Now Playing - " + amdroid.playlistCurrent.get(amdroid.playingIndex).name;
+            if (domob.mp.isPlaying()) {
+                title = "Now Playing - " + domob.playlistCurrent.get(domob.playingIndex).name;
             } else {
-                title = "Paused - " + amdroid.playlistCurrent.get(amdroid.playingIndex).name;
+                title = "Paused - " + domob.playlistCurrent.get(domob.playingIndex).name;
             }
         } catch(Exception e) {
             title = "No Song Selected";
@@ -96,7 +96,7 @@ public class dashActivity extends Activity implements OnClickListener {
         TextView si = (TextView) findViewById(R.id.artist);
         String info = "";
         try {
-            info = amdroid.playlistCurrent.get(amdroid.playingIndex).extraString();
+            info = domob.playlistCurrent.get(domob.playingIndex).extraString();
         } catch(Exception e) {
             info = "Show current playlist";
         }

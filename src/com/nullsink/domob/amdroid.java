@@ -35,7 +35,7 @@ import android.telephony.TelephonyManager;
 import android.media.AudioManager;
 import android.content.Context;
 
-public final class amdroid extends Application {
+public final class domob extends Application {
 
     public static ampacheCommunicator comm;
     public static ampacheRequestHandler requestHandler;

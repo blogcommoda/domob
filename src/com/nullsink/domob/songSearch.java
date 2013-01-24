@@ -49,7 +49,7 @@ public final class songSearch extends ListActivity {
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        amdroid.comm.ping();
+        domob.comm.ping();
 
         final Intent queryIntent = getIntent();
         final String queryAction = queryIntent.getAction();
@@ -83,7 +83,7 @@ public final class songSearch extends ListActivity {
             searchCompleteHandler.ca = new collectionAdapter(this, R.layout.browsable_item, list);
             
             setListAdapter(searchCompleteHandler.ca);
-            amdroid.requestHandler.incomingRequestHandler.sendMessage(searchMsg);
+            domob.requestHandler.incomingRequestHandler.sendMessage(searchMsg);
         } else {
             setListAdapter(new collectionAdapter(this, R.layout.browsable_item, list));
         }
@@ -100,7 +100,7 @@ public final class songSearch extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case 0:
-            amdroid.playlistCurrent.addAll((ArrayList)list);
+            domob.playlistCurrent.addAll((ArrayList)list);
             break;
             
         default:
@@ -117,7 +117,7 @@ public final class songSearch extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         ampacheObject val = (ampacheObject) l.getItemAtPosition(position);
         Toast.makeText(this, "Enqueue " + val.getType() + ": " + val.toString(), Toast.LENGTH_LONG).show();
-        amdroid.playlistCurrent.add((Song) val);
+        domob.playlistCurrent.add((Song) val);
         return;
     }
     
