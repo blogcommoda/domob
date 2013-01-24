@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 import android.app.Service;
 import android.app.NotificationManager;
@@ -18,8 +18,8 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sound.ampache.objects.*;
-import com.sound.ampache.IPlayerService;
+import com.nullsink.domob.objects.*;
+import com.nullsink.domob.IPlayerService;
 
 public class playerService extends Service {
     //private IBinder mBinder;

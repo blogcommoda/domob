@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
  *
@@ -20,7 +20,7 @@ package com.sound.ampache;
  * +------------------------------------------------------------------------+
  */
 
-import com.sound.ampache.R;
+import com.nullsink.domob.R;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -39,8 +39,8 @@ public class prefsActivity extends PreferenceActivity {
     protected void onDestroy() {
         /* we want to tell other activities that we need to reload */
         super.onDestroy();
-        amdroid.confChanged = true;
-        amdroid.comm.authToken = null;
+        domob.confChanged = true;
+        domob.comm.authToken = null;
     }
 }
 

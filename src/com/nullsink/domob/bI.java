@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2008-2009 Kevin James Purdy <purdyk@gmail.com>                                              
  *                                                                                                           
@@ -20,52 +20,9 @@ package com.sound.ampache;
  * +------------------------------------------------------------------------+                                
  */
 
-import android.content.Context;
-import android.content.Intent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import com.sound.ampache.objects.*;
-import android.os.Bundle;
-import java.util.ArrayList;
 
-public final class collectionAdapter extends ArrayAdapter
-{
-    
-    private Context mCtx;
-    private int resid;
-    private LayoutInflater mInflater;
-
-    public collectionAdapter(Context context, int resid, ArrayList list) {
-        super(context, resid, list);
-        this.resid = resid;
-        mCtx = context;
-        mInflater = LayoutInflater.from(context);
-    }
-    
-    public View getView(int position, View convertView, ViewGroup parent) {
-        bI holder;
-        ampacheObject cur = (ampacheObject) getItem(position);
-
-        /* we don't reuse */
-        if (convertView == null) {
-            convertView = mInflater.inflate(resid, null);
-            holder = new bI();
-            
-            holder.title = (TextView) convertView.findViewById(R.id.title);
-            holder.other = (TextView) convertView.findViewById(R.id.other);
-            
-            convertView.setTag(holder);
-        } else {
-            holder = (bI) convertView.getTag();
-        }
-
-        if (cur != null) {
-            holder.title.setText(cur.toString());
-            holder.other.setText(cur.extraString());
-        }
-        return convertView;
-    }
+public final class bI {
+    TextView title;
+    TextView other;
 }

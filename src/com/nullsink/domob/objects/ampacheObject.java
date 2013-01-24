@@ -1,4 +1,4 @@
-package com.sound.ampache.objects;
+package com.nullsink.domob.objects;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
  *
@@ -20,62 +20,44 @@ package com.sound.ampache.objects;
  * +------------------------------------------------------------------------+
  */
 
-import java.util.ArrayList;
-import android.os.Parcelable;
+import android.os.Parcelable; 
 import android.os.Parcel;
+import java.util.ArrayList;
 
-public class Album extends ampacheObject {
-    public String artist = "";
-    public String tracks = "";
-    public String extra = null;
-
-    public String getType() {
-        return "Album";
+public abstract class ampacheObject implements Parcelable {
+    public String id = "";
+    public String name = "";
+    
+    public String getId() {
+        return id;
+    }
+    
+    public String toString() {
+        return name;
     }
 
-    public String extraString() {
-        if (extra == null) {
-            extra = artist + " - " + tracks + " tracks";
-        }
-        return extra;
-    }
+    abstract public String extraString();
 
-    public String childString() {
-        return "album_songs";
-    }
+    abstract public String getType();
 
-    public boolean hasChildren() {
-	return true;
-    }
+    abstract public String childString();
 
-    public String[] allChildren() {
-        String[] dir = {"album_songs", this.id};
-        return dir;
-    }
+    abstract public String[] allChildren();
 
-    public Album() {
+    abstract public boolean hasChildren();
+
+    /* for parcelable*/
+    public int describeContents() {
+        return CONTENTS_FILE_DESCRIPTOR;
     }
 
     public void writeToParcel(Parcel out, int flags) {
-        super.writeToParcel(out, flags);
-        out.writeString(artist);
-        out.writeString(tracks);
+        out.writeString(id);
+        out.writeString(name);
     }
 
-    public Album(Parcel in) {
-        super.readFromParcel(in);
-        artist = in.readString();
-        tracks = in.readString();
+    public void readFromParcel(Parcel in) {
+        id = in.readString();
+        name = in.readString();
     }
-
-    public static final Parcelable.Creator CREATOR
-        = new Parcelable.Creator() {
-                public Album createFromParcel(Parcel in) {
-                    return new Album(in);
-                }
-
-                public Album[] newArray(int size) {
-                    return new Album[size];
-                }
-            };
 }

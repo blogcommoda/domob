@@ -1,4 +1,4 @@
-package com.sound.ampache.objects;
+package com.nullsink.domob.objects;
 import java.util.ArrayList;
 import android.os.Parcelable;
 import android.os.Parcel;

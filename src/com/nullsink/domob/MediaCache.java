@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2012 Ed Baker <edward.david.baker@gmail.com>
  *
@@ -117,7 +117,7 @@ public class MediaCache {
     // We can keep track of the Ampache song ID in the download description
     request.setDescription(String.valueOf(songUid));
     // Set the title incase we want to view the downloads in the download manager for debugging
-    request.setTitle("Amdroid caching song");
+    request.setTitle("domob caching song");
     // Normally, we don't want these downloads to appear in the UI or notifications
     request.setVisibleInDownloadsUi(false);
     // TODO: Buy a new phone that isn't stuck below API 11 :)

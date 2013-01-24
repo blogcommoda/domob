@@ -1,4 +1,4 @@
-package com.sound.ampache;
+package com.nullsink.domob;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
  *
@@ -20,13 +20,13 @@ package com.sound.ampache;
  * +------------------------------------------------------------------------+
  */
 
-import com.sound.ampache.ampacheCommunicator;
-import com.sound.ampache.ampacheCommunicator.ampacheRequestHandler;
+import com.nullsink.domob.ampacheCommunicator;
+import com.nullsink.domob.ampacheCommunicator.ampacheRequestHandler;
 import android.app.Application;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import java.util.ArrayList;
-import com.sound.ampache.objects.*;
+import com.nullsink.domob.objects.*;
 import android.os.Debug;
 import android.os.Bundle;
 import android.media.MediaPlayer;
@@ -35,7 +35,7 @@ import android.telephony.TelephonyManager;
 import android.media.AudioManager;
 import android.content.Context;
 
-public final class amdroid extends Application {
+public final class domob extends Application {
 
     public static ampacheCommunicator comm;
     public static ampacheRequestHandler requestHandler;

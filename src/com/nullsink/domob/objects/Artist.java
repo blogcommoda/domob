@@ -1,4 +1,4 @@
-package com.sound.ampache.objects;
+package com.nullsink.domob.objects;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
  *
@@ -24,60 +24,52 @@ import java.util.ArrayList;
 import android.os.Parcelable;
 import android.os.Parcel;
 
-public class Playlist extends ampacheObject {
-    public String owner = "";
-    public String count = "";
-    public String extra = null;
-
-    public String getType() {
-        return "Playlist";
-    }
-    
-    public String extraString() {
-        if (extra == null) {
-            extra = owner + " - " + count;
-        }
-        return extra;
-    }
+public class Artist extends ampacheObject {
+    public String albums = "";
 
     public boolean hasChildren() {
         return true;
     }
     
-    public String childString() {
-        return "playlist_songs";
+    public String extraString() {
+        return albums;
+    }
+    
+    public String getType() {
+        return "Artist";
     }
 
+    public String childString() {
+        return "artist_albums";
+    }
+    
     public String[] allChildren() {
-        String[] dir = {"playlist_songs", this.id};
+        String[] dir = {"artist_songs", this.id};
         return dir;
     }
 
-    public Playlist() {
+    public Artist() {
     }
 
     public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);
-        out.writeString(owner);
-        out.writeString(count);
-        out.writeString(extra);
+        out.writeString(albums);
     }
 
-    public Playlist(Parcel in) {
+    public Artist(Parcel in) {
         super.readFromParcel(in);
-        owner = in.readString();
-        count = in.readString();
-        extra = in.readString();
+        albums = in.readString();
     }
 
     public static final Parcelable.Creator CREATOR
         = new Parcelable.Creator() {
-                public Playlist createFromParcel(Parcel in) {
-                    return new Playlist(in);
+                public Artist createFromParcel(Parcel in) {
+                    return new Artist(in);
                 }
-
-                public Playlist[] newArray(int size) {
-                    return new Playlist[size];
+                
+                public Artist[] newArray(int size) {
+                    return new Artist[size];
                 }
             };
 }
+

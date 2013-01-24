@@ -1,4 +1,4 @@
-package com.sound.ampache.objects;
+package com.nullsink.domob.objects;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
  *
@@ -20,44 +20,64 @@ package com.sound.ampache.objects;
  * +------------------------------------------------------------------------+
  */
 
-import android.os.Parcelable; 
-import android.os.Parcel;
 import java.util.ArrayList;
+import android.os.Parcelable;
+import android.os.Parcel;
 
-public abstract class ampacheObject implements Parcelable {
-    public String id = "";
-    public String name = "";
-    
-    public String getId() {
-        return id;
+public class Playlist extends ampacheObject {
+    public String owner = "";
+    public String count = "";
+    public String extra = null;
+
+    public String getType() {
+        return "Playlist";
     }
     
-    public String toString() {
-        return name;
+    public String extraString() {
+        if (extra == null) {
+            extra = owner + " - " + count;
+        }
+        return extra;
     }
 
-    abstract public String extraString();
+    public boolean hasChildren() {
+        return true;
+    }
+    
+    public String childString() {
+        return "playlist_songs";
+    }
 
-    abstract public String getType();
+    public String[] allChildren() {
+        String[] dir = {"playlist_songs", this.id};
+        return dir;
+    }
 
-    abstract public String childString();
-
-    abstract public String[] allChildren();
-
-    abstract public boolean hasChildren();
-
-    /* for parcelable*/
-    public int describeContents() {
-        return CONTENTS_FILE_DESCRIPTOR;
+    public Playlist() {
     }
 
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(id);
-        out.writeString(name);
+        super.writeToParcel(out, flags);
+        out.writeString(owner);
+        out.writeString(count);
+        out.writeString(extra);
     }
 
-    public void readFromParcel(Parcel in) {
-        id = in.readString();
-        name = in.readString();
+    public Playlist(Parcel in) {
+        super.readFromParcel(in);
+        owner = in.readString();
+        count = in.readString();
+        extra = in.readString();
     }
+
+    public static final Parcelable.Creator CREATOR
+        = new Parcelable.Creator() {
+                public Playlist createFromParcel(Parcel in) {
+                    return new Playlist(in);
+                }
+
+                public Playlist[] newArray(int size) {
+                    return new Playlist[size];
+                }
+            };
 }

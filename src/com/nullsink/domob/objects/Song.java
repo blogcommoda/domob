@@ -1,4 +1,4 @@
-package com.sound.ampache.objects;
+package com.nullsink.domob.objects;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
  * Copyright (c) 2010 Jacob Alexander   < haata@users.sf.net >
@@ -56,12 +56,12 @@ public class Song extends ampacheObject implements Externalizable {
 
     /* Replace the old session id with our current one */
     public String liveUrl() {
-        return url.replaceAll("sid=[^&]+","sid=" + com.sound.ampache.amdroid.comm.authToken).replaceFirst(".ogg$", ".mp3");
+        return url.replaceAll("sid=[^&]+","sid=" + com.nullsink.domob.domob.comm.authToken).replaceFirst(".ogg$", ".mp3");
     }
 
     /* Replace old session id, to use with the Album Art */
     public String liveArt() {
-        return art.replaceAll("auth=[^&]+","auth=" + com.sound.ampache.amdroid.comm.authToken);
+        return art.replaceAll("auth=[^&]+","auth=" + com.nullsink.domob.domob.comm.authToken);
     }
     
     public boolean hasChildren() {
