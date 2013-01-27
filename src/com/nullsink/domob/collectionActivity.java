@@ -31,6 +31,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import java.util.ArrayList;
@@ -165,6 +168,27 @@ public final class collectionActivity extends ListActivity implements OnItemLong
         }
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.collection_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = null;
+        switch (item.getItemId()) {
+            case R.id.playing:
+                intent = new Intent().setClass(this, playlistActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.prefs:
+                intent = new Intent().setClass(this, prefsActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return true;
+    }
+
     public void onDestroy() {
         super.onDestroy();
         if (isFetching) {
@@ -212,7 +236,7 @@ public final class collectionActivity extends ListActivity implements OnItemLong
         public ArrayList list;
         public collectionAdapter ca;
     }
-
+    
     private class dataHandler extends Handler {
 
         public Boolean stop = false;
