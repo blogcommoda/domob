@@ -1,7 +1,6 @@
 package com.nullsink.domob;
 
 import android.app.Service;
-import android.app.NotificationManager;
 
 import android.content.Intent;
 

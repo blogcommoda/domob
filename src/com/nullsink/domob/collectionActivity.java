@@ -22,34 +22,19 @@ package com.nullsink.domob;
  */
 
 import android.app.ListActivity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
-import android.preference.PreferenceManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import android.widget.BaseAdapter;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
-import android.widget.TextView;
-import android.widget.ImageView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.LayoutInflater;
 import android.view.Window;
-import java.util.List;
 import java.util.ArrayList;
-import java.io.*;
 import com.nullsink.domob.objects.*;
-import java.lang.Integer;
 
 public final class collectionActivity extends ListActivity implements OnItemLongClickListener 
 {

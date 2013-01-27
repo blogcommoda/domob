@@ -28,18 +28,13 @@ import java.util.ArrayList;
 import com.nullsink.domob.objects.*;
 import android.content.SharedPreferences;
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import java.io.*;
-import java.net.*;
-import java.math.BigInteger;
 import java.lang.Integer;
 import java.lang.Long;
 import java.security.MessageDigest;
 import java.util.Date;
-import java.util.List;
 
 public class ampacheCommunicator
 {

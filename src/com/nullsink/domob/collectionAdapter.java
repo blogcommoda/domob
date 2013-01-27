@@ -21,14 +21,12 @@ package com.nullsink.domob;
  */
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.nullsink.domob.objects.*;
-import android.os.Bundle;
 import java.util.ArrayList;
 
 public final class collectionAdapter extends ArrayAdapter

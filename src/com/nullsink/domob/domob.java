@@ -27,7 +27,6 @@ import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import java.util.ArrayList;
 import com.nullsink.domob.objects.*;
-import android.os.Debug;
 import android.os.Bundle;
 import android.media.MediaPlayer;
 import android.telephony.PhoneStateListener;

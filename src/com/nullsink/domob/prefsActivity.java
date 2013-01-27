@@ -21,9 +21,7 @@ package com.nullsink.domob;
  */
 
 import com.nullsink.domob.R;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
 
 public class prefsActivity extends PreferenceActivity {

@@ -24,7 +24,6 @@ package com.nullsink.domob;
 
 import com.nullsink.domob.R;
 import android.app.Activity;
-import android.app.SearchManager;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;

@@ -22,7 +22,6 @@ package com.nullsink.domob.objects;
 
 import android.os.Parcelable; 
 import android.os.Parcel;
-import java.util.ArrayList;
 
 public abstract class ampacheObject implements Parcelable {
     public String id = "";
