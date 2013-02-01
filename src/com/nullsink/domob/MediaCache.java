@@ -252,5 +252,17 @@ public class MediaCache {
     String path = mCacheDir.getAbsolutePath() + "/" + songUid;
     return path;
   }
+
+  /** \brief This checks that the external storage is available.
+   */
+  private boolean isExternalStorageReady() {
+    String state = Environment.getExternalStorageState();
+    if (Environment.MEDIA_MOUNTED.equals(state)) {
+      // We are good to go, can read and write.
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
