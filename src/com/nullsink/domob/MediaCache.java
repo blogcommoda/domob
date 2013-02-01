@@ -63,20 +63,23 @@ public class MediaCache {
     mDownloadManager = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
     mDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Allow the system to cache another song initially
 
-    // Setup the directory to store the cache on the external storage
-    File externalMusicDir = mContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
-    mCacheDir = new File(externalMusicDir.getAbsolutePath());
-    if (mCacheDir.exists() == false) {
-      Log.i(TAG, mCacheDir + " does not exist, creating directory.");
-      mCacheDir.mkdirs();
-    }
+    // Before creating any directories, double check the external storage
+    if (isExternalStorageReady() == true) {
+      // Setup the directory to store the cache on the external storage
+      File externalMusicDir = mContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+      mCacheDir = new File(externalMusicDir.getAbsolutePath());
+      if (mCacheDir.exists() == false) {
+        Log.i(TAG, mCacheDir + " does not exist, creating directory.");
+        mCacheDir.mkdirs();
+      }
 
-    // Setup the directory to store the temporary DownloadManager files
-    File externalDownloadDir = mContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-    mTempDownloadDir = new File(externalDownloadDir.getAbsolutePath());
-    if (mTempDownloadDir.exists() == false) {
-      Log.i(TAG, mTempDownloadDir + " does not exist, creating directory.");
-      mTempDownloadDir.mkdirs();
+      // Setup the directory to store the temporary DownloadManager files
+      File externalDownloadDir = mContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+      mTempDownloadDir = new File(externalDownloadDir.getAbsolutePath());
+      if (mTempDownloadDir.exists() == false) {
+        Log.i(TAG, mTempDownloadDir + " does not exist, creating directory.");
+        mTempDownloadDir.mkdirs();
+      }
     }
 
     // When the Android download manager finishes a download
@@ -89,6 +92,11 @@ public class MediaCache {
    *  \param[in] songUrl The actual live URL to download the track from Ampache.
    */
   public void cacheSong(long songUid, String songUrl) throws Exception {
+    // Give up if the external storage isn't available
+    if (isExternalStorageReady() == false) {
+      return;
+    }
+
     // If the song is already cached, we are already done
     if (checkIfCached(songUid) == true) {
       return;
@@ -177,6 +185,11 @@ public class MediaCache {
    *  \param[in] songUid The unique ID as from Ampache.
    */
   public boolean checkIfCached(long songUid) throws Exception {
+    // Give up if the external storage isn't available
+    if (isExternalStorageReady() == false) {
+      return false;
+    }
+
     // Initially set to false. Will switch to true if we find the file.
     boolean cached = false;
     // Construct the path to check for the cached song
@@ -196,6 +209,11 @@ public class MediaCache {
    *          space available.
    */
   private boolean checkIfCacheSpaceAvailable() {
+    // Give up if the external storage isn't available
+    if (isExternalStorageReady() == false) {
+      return false;
+    }
+
     // Initially set to false. Will switch to true if we find available space.
     boolean spaceAvailable = false;
     // Collect the list of files currently in the cache directory
@@ -214,6 +232,11 @@ public class MediaCache {
    *         song.
    */
   private void makeCacheSpace() {
+    // Give up if the external storage isn't available
+    if (isExternalStorageReady() == false) {
+      return;
+    }
+
     File cacheFiles[] = mCacheDir.listFiles();
 
     // Before doing anything else, return if there is room left.
