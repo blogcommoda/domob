@@ -253,7 +253,7 @@ public class MediaCache {
     });
 
     // We want to remove the oldest files, which will be at the end of the array.
-    for (int x = 0; x < cacheFiles.length - MAX_SONGS_CACHED; x++) {
+    for (int x = 0; x <= cacheFiles.length - MAX_SONGS_CACHED; x++) {
       // For example, if the array is 30 long we want to initially delete slot 29.
       int y = cacheFiles.length - x - 1;
       Log.i(TAG, "makeCacheSpace, cacheFiles[" + y + "].lastModified=" + cacheFiles[y].lastModified());
