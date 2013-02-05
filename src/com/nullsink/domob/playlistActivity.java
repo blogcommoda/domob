@@ -403,7 +403,7 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
             // Check to see if the file is already cached
             if (mMediaCache.checkIfCached(Long.valueOf(chosen.id)) == true)
             {
-              Log.i("domob", "Playing Song ID " + chosen.id + "from local cache.");
+              Log.i("domob", "Playing Song ID " + chosen.id + " from local cache.");
               domob.mp.setDataSource(mMediaCache.cachedSongPath(Long.valueOf(chosen.id)));
               domob.mp.prepareAsync();
               prepared = false;

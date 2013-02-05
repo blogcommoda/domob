@@ -218,7 +218,7 @@ public class MediaCache {
     boolean spaceAvailable = false;
     // Collect the list of files currently in the cache directory
     String fileList[] = mCacheDir.list();
-    Log.i(TAG, "checkIfCacheSpaceAvailable, current # of files cached: " + fileList.length);
+    Log.i(TAG, "checkIfCacheSpaceAvailable, currently " + fileList.length + "/" + MAX_SONGS_CACHED);
 
     // If there is room left, return true
     if (fileList.length < MAX_SONGS_CACHED) {
