@@ -252,15 +252,12 @@ public class MediaCache {
       }
     });
 
-    // We want to remove the oldest files, which will be at the end of the array.
+    // We want to remove the oldest files, which will be at the front of the array.
     for (int x = 0; x <= cacheFiles.length - MAX_SONGS_CACHED; x++) {
-      // For example, if the array is 30 long we want to initially delete slot 29.
-      int y = cacheFiles.length - x - 1;
-      Log.i(TAG, "makeCacheSpace, cacheFiles[" + y + "].lastModified=" + cacheFiles[y].lastModified());
-      if (cacheFiles[y].delete()) {
-        Log.i(TAG, "makeCacheSpace, successfully deleted " + cacheFiles[y].getAbsolutePath());
+      if (cacheFiles[x].delete()) {
+        Log.i(TAG, "makeCacheSpace, successfully deleted " + cacheFiles[x].getAbsolutePath());
       } else {
-        Log.i(TAG, "makeCacheSpace, failed to delete " + cacheFiles[y].getAbsolutePath());
+        Log.i(TAG, "makeCacheSpace, failed to delete " + cacheFiles[x].getAbsolutePath());
       }
     }
   }
