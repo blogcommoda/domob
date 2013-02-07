@@ -392,6 +392,10 @@ public class ampacheCommunicator
                 current.tracks = contents.toString();
             }
 
+            if (localName.equals("year")) {
+              current.year = contents.toString();
+            }
+
             if (localName.equals("album")) {
                 data.add(current);
             }
