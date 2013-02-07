@@ -36,6 +36,16 @@ public class Album extends ampacheObject {
         return "Album";
     }
 
+    public Integer getYear() {
+        Integer parsedYear = -1;
+        try {
+          parsedYear = Integer.parseInt(year);
+        } catch (NumberFormatException e) {
+          Log.e(TAG, e.getMessage());
+        }
+        return parsedYear;
+    }
+
     public String extraString() {
         if (extra == null) {
             extra = year + " - " + tracks + " tracks";
