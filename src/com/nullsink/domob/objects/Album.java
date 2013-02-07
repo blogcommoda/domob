@@ -22,12 +22,15 @@ package com.nullsink.domob.objects;
 
 import android.os.Parcelable;
 import android.os.Parcel;
+import android.util.Log;
 
 public class Album extends ampacheObject {
     public String artist = "";
     public String tracks = "";
     public String year = "";
     public String extra = null;
+    /// Used for calls to Log
+    private static final String TAG = "Album";
 
     public String getType() {
         return "Album";

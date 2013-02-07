@@ -47,6 +47,8 @@ public final class collectionActivity extends ListActivity implements OnItemLong
     private ArrayList<ampacheObject> list = null;
     private String[] directive;
     private Boolean isFetching = false;
+    // Used for calls to Log
+    private static final String TAG = "collectionActivity";
 
     /** Called when the activity is first created. */
     @Override
