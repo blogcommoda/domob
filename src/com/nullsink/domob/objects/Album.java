@@ -48,7 +48,11 @@ public class Album extends ampacheObject {
 
     public String extraString() {
         if (extra == null) {
+          if (year.equals("N/A")) {
+            extra = tracks + " tracks";
+          } else {
             extra = year + " - " + tracks + " tracks";
+          }
         }
         return extra;
     }
