@@ -31,12 +31,16 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.nullsink.domob.objects.*;
 
 public final class collectionActivity extends ListActivity implements OnItemLongClickListener 
@@ -47,6 +51,8 @@ public final class collectionActivity extends ListActivity implements OnItemLong
     private ArrayList<ampacheObject> list = null;
     private String[] directive;
     private Boolean isFetching = false;
+    // Used for calls to Log
+    private static final String TAG = "collectionActivity";
 
     /** Called when the activity is first created. */
     @Override
@@ -273,6 +279,11 @@ public final class collectionActivity extends ListActivity implements OnItemLong
             case (0x1337):
                 /* Handle primary updates */
                 list.addAll((ArrayList) msg.obj);
+                Log.i(TAG, list + " have type " + list.get(0).getType());
+                // Sort the albums from newest to oldest
+                if (list.get(0).getType().equals("Album")) {
+                  Collections.sort((List)list, new AlbumComparator());
+                }
                 setProgressBarIndeterminateVisibility(false);
                 ca.notifyDataSetChanged();
                 isFetching = false;

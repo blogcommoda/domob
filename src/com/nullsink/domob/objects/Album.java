@@ -22,19 +22,37 @@ package com.nullsink.domob.objects;
 
 import android.os.Parcelable;
 import android.os.Parcel;
+import android.util.Log;
 
 public class Album extends ampacheObject {
     public String artist = "";
     public String tracks = "";
+    public String year = "";
     public String extra = null;
+    /// Used for calls to Log
+    private static final String TAG = "Album";
 
     public String getType() {
         return "Album";
     }
 
+    public Integer getYear() {
+        Integer parsedYear = -1;
+        try {
+          parsedYear = Integer.parseInt(year);
+        } catch (NumberFormatException e) {
+          Log.e(TAG, e.getMessage());
+        }
+        return parsedYear;
+    }
+
     public String extraString() {
         if (extra == null) {
-            extra = artist + " - " + tracks + " tracks";
+          if (year.equals("N/A")) {
+            extra = tracks + " tracks";
+          } else {
+            extra = year + " - " + tracks + " tracks";
+          }
         }
         return extra;
     }
@@ -59,12 +77,14 @@ public class Album extends ampacheObject {
         super.writeToParcel(out, flags);
         out.writeString(artist);
         out.writeString(tracks);
+        out.writeString(year);
     }
 
     public Album(Parcel in) {
         super.readFromParcel(in);
         artist = in.readString();
         tracks = in.readString();
+        year = in.readString();
     }
 
     public static final Parcelable.Creator CREATOR
