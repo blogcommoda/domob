@@ -67,6 +67,9 @@ public final class collectionActivity extends ListActivity implements OnItemLong
         //debugging crap
         //Debug.waitForDebugger();
 
+        // Verify a valid session.
+        domob.comm.ping();
+
         // We've tried to login, and failed, so present the user with the preferences pane
         if (domob.comm.authToken == null || domob.comm.authToken.equals("")) {
             Toast.makeText(this, "Login Failed: " + domob.comm.lastErr, Toast.LENGTH_LONG).show();
@@ -74,9 +77,6 @@ public final class collectionActivity extends ListActivity implements OnItemLong
             startActivity(prefsIntent);
             return;
         }
-
-        // Verify a valid session.
-        domob.comm.ping();
 
         Intent intent = getIntent();
 
