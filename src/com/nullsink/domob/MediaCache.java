@@ -47,6 +47,8 @@ public class MediaCache {
   private static final long NO_DOWNLOAD_IN_PROGRESS = -1;
   /// Folder to store all of the local songs
   private File mSongCacheDir;
+  /// Folder to store all of the local art
+  private File mArtCacheDir;
   /// Folder to temporarily store files while downloading
   private File mTempDownloadDir;
   /// Used for calls to Log
