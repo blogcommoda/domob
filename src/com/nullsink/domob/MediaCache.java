@@ -45,8 +45,8 @@ public class MediaCache {
   private static final long MAX_SONGS_CACHED = 100;
   /// We can queue up another download
   private static final long NO_DOWNLOAD_IN_PROGRESS = -1;
-  /// Folder to store all of the local files
-  private File mCacheDir;
+  /// Folder to store all of the local songs
+  private File mSongCacheDir;
   /// Folder to temporarily store files while downloading
   private File mTempDownloadDir;
   /// Used for calls to Log
@@ -67,10 +67,10 @@ public class MediaCache {
     if (isExternalStorageReady() == true) {
       // Setup the directory to store the cache on the external storage
       File externalMusicDir = mContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
-      mCacheDir = new File(externalMusicDir.getAbsolutePath());
-      if (mCacheDir.exists() == false) {
-        Log.i(TAG, mCacheDir + " does not exist, creating directory.");
-        mCacheDir.mkdirs();
+      mSongCacheDir = new File(externalMusicDir.getAbsolutePath());
+      if (mSongCacheDir.exists() == false) {
+        Log.i(TAG, mSongCacheDir + " does not exist, creating directory.");
+        mSongCacheDir.mkdirs();
       }
 
       // Setup the directory to store the temporary DownloadManager files
@@ -217,7 +217,7 @@ public class MediaCache {
     // Initially set to false. Will switch to true if we find available space.
     boolean spaceAvailable = false;
     // Collect the list of files currently in the cache directory
-    String fileList[] = mCacheDir.list();
+    String fileList[] = mSongCacheDir.list();
     Log.i(TAG, "checkIfCacheSpaceAvailable, currently " + fileList.length + "/" + MAX_SONGS_CACHED);
 
     // If there is room left, return true
@@ -237,7 +237,7 @@ public class MediaCache {
       return;
     }
 
-    File cacheFiles[] = mCacheDir.listFiles();
+    File cacheFiles[] = mSongCacheDir.listFiles();
 
     // Before doing anything else, return if there is room left.
     if (cacheFiles.length < MAX_SONGS_CACHED) {
@@ -269,7 +269,7 @@ public class MediaCache {
    * \param[in] songUid the unique ID as from Ampache
    */
   public String cachedSongPath(long songUid) {
-    String path = mCacheDir.getAbsolutePath() + "/" + songUid;
+    String path = mSongCacheDir.getAbsolutePath() + "/" + songUid;
     return path;
   }
 
