@@ -39,7 +39,7 @@ public class MediaCache {
   private DownloadManager mDownloadManager;
   /// This keeps track of the song being downloaded. When this is set to NO_DOWNLOAD_IN_PROGRESS
   /// we can queue up another song. Otherwise, there is already a song being downloaded.
-  private long mDownloadId;
+  private long mSongDownloadId;
   private Context mContext;
   /// Maximum number of songs to cache
   private static final long MAX_SONGS_CACHED = 100;
@@ -63,7 +63,7 @@ public class MediaCache {
   MediaCache (Context mCtxt) {
     mContext = mCtxt;
     mDownloadManager = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
-    mDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Allow the system to cache another song initially
+    mSongDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Allow the system to cache another song initially
 
     // Before creating any directories, double check the external storage
     if (isExternalStorageReady() == true) {
@@ -105,7 +105,7 @@ public class MediaCache {
     }
 
     // Check to see if we already have a download running. Only cache one song at a time.
-    if (mDownloadId != NO_DOWNLOAD_IN_PROGRESS) {
+    if (mSongDownloadId != NO_DOWNLOAD_IN_PROGRESS) {
       Log.i(TAG, "cacheSong returning, there is already a download in progress.");
       return;
     }
@@ -131,8 +131,8 @@ public class MediaCache {
     request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS,
                                              String.valueOf(songUid));
     // Queue up the request
-    mDownloadId = mDownloadManager.enqueue(request);
-    Log.i(TAG, "cacheSong queued download request mDownloadId=" + mDownloadId);
+    mSongDownloadId = mDownloadManager.enqueue(request);
+    Log.i(TAG, "cacheSong queued download request mSongDownloadId=" + mSongDownloadId);
   }
 
   /** \brief Handle the song finished download.
@@ -145,7 +145,7 @@ public class MediaCache {
     if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
       // Query for more info using the ID
       Query query = new Query();
-      query.setFilterById(mDownloadId);
+      query.setFilterById(mSongDownloadId);
       Cursor cur = mDownloadManager.query(query);
 
       // Access the first row of data returned
@@ -178,7 +178,7 @@ public class MediaCache {
       }
 
       // Also set the mDownloadId to indicate that no download is in progress
-      mDownloadId = NO_DOWNLOAD_IN_PROGRESS;
+      mSongDownloadId = NO_DOWNLOAD_IN_PROGRESS;
     }
   }
 
