@@ -34,6 +34,7 @@ public class Song extends ampacheObject implements Externalizable {
     public String art = "";
     public String url = "";
     public String album = "";
+    public String albumId = "";
     public String genre = "";
     public String extra = null;
 
@@ -80,6 +81,7 @@ public class Song extends ampacheObject implements Externalizable {
         out.writeString(art);
         out.writeString(url);
         out.writeString(album);
+        out.writeString(albumId);
         out.writeString(genre);
         out.writeString(extra);
     }
@@ -90,6 +92,7 @@ public class Song extends ampacheObject implements Externalizable {
         art = in.readString();
         url = in.readString();
         album = in.readString();
+        albumId = in.readString();
         genre = in.readString();
         extra = in.readString();
     }
@@ -114,6 +117,7 @@ public class Song extends ampacheObject implements Externalizable {
         art = (String) in.readObject();
         url = (String) in.readObject();
         album = (String) in.readObject();
+        albumId = (String) in.readObject();
         genre = (String) in.readObject();
     }
 
@@ -124,6 +128,7 @@ public class Song extends ampacheObject implements Externalizable {
         out.writeObject(art);
         out.writeObject(url);
         out.writeObject(album);
+        out.writeObject(albumId);
         out.writeObject(genre);
     }
 

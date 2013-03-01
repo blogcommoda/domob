@@ -492,6 +492,8 @@ public class ampacheCommunicator
             if (localName.equals("song")) {
                 current = new Song();
                 current.id = attr.getValue("id");
+            } else if (localName.equals("album")) {
+                current.albumId = attr.getValue("id");
             }
         }
         
