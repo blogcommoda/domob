@@ -401,7 +401,7 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
             Log.i("domob", "Song URL     - " + chosen.url );
             Log.i("domob", "Song URL (C) - " + chosen.liveUrl() );
             // Check to see if the file is already cached
-            if (mMediaCache.checkIfCached(Long.valueOf(chosen.id)) == true)
+            if (mMediaCache.isSongCached(Long.valueOf(chosen.id)) == true)
             {
               Log.i("domob", "Playing Song ID " + chosen.id + " from local cache.");
               domob.mp.setDataSource(mMediaCache.cachedSongPath(Long.valueOf(chosen.id)));

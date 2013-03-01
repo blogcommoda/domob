@@ -120,7 +120,7 @@ public class MediaCache {
     // Generate a new request to then add to the download manager queue.
     Request request = new Request(Uri.parse(song.liveUrl()));
     // We can keep track of the Ampache song ID in the download description
-    request.setDescription(song.id);
+    request.setDescription("song:" + song.id);
     // Set the title incase we want to view the downloads in the download manager for debugging
     request.setTitle("domob caching song");
     // Normally, we don't want these downloads to appear in the UI or notifications
