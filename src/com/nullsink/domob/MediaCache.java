@@ -193,37 +193,44 @@ public class MediaCache {
       if (cur.moveToFirst()) {
         // Find the column which corresponds to the download status
         int statusIndex = cur.getColumnIndex(DownloadManager.COLUMN_STATUS);
-        // If the download was successful try and move the file to our cache location
-        if (DownloadManager.STATUS_SUCCESSFUL == cur.getInt(statusIndex)) {
-          // Find the column which corresponds to the current file URI
-          int uriIndex = cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
-          // Retreive the temporary URI to where DownloadManager stored the file
-          String downloadUri = cur.getString(uriIndex);
-          File downloadFile = new File(Uri.parse(downloadUri).getPath());
+        switch (cur.getInt(statusIndex)) {
+          // If the download was successful try and move the file to our cache location
+          case DownloadManager.STATUS_SUCCESSFUL:
+            // Find the column which corresponds to the current file URI
+            int uriIndex = cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+            // Retreive the temporary URI to where DownloadManager stored the file
+            String downloadUri = cur.getString(uriIndex);
+            File downloadFile = new File(Uri.parse(downloadUri).getPath());
 
-          // Find the column which corresponds to the description we provided (Ampache song/album id)
-          int descriptionIndex = cur.getColumnIndex(DownloadManager.COLUMN_DESCRIPTION);
-          // Retreive the description. This will be something such as song:6 or album:15
-          String[] description = cur.getString(descriptionIndex).split(":");
-          String downloadType = description[0];
-          long downloadId = Long.valueOf(description[1]);
+            // Find the column which corresponds to the description we provided (Ampache song/album id)
+            int descriptionIndex = cur.getColumnIndex(DownloadManager.COLUMN_DESCRIPTION);
+            // Retreive the description. This will be something such as song:6 or album:15
+            String[] description = cur.getString(descriptionIndex).split(":");
+            String downloadType = description[0];
+            long downloadId = Long.valueOf(description[1]);
 
-          // Setup the destination file
-          String destinationPath = null;
-          if (downloadType.equals("song")) {
-            destinationPath = cachedSongPath(downloadId);
-          } else if (downloadType.equals("album")) {
-            destinationPath = cachedArtPath(downloadId);
-          }
-          Log.i(TAG, "downloadType=" + downloadType + " downloadId=" + downloadId);
+            // Setup the destination file
+            String destinationPath = null;
+            if (downloadType.equals("song")) {
+              destinationPath = cachedSongPath(downloadId);
+            } else if (downloadType.equals("album")) {
+              destinationPath = cachedArtPath(downloadId);
+            }
+            Log.i(TAG, "downloadType=" + downloadType + " downloadId=" + downloadId);
 
-          File destinationFile = new File(Uri.parse(destinationPath).getPath());
+            File destinationFile = new File(Uri.parse(destinationPath).getPath());
 
-          // Move the file
-          Log.i(TAG, "Moving " + downloadFile + " to " + destinationFile);
-          if (downloadFile.renameTo(destinationFile)) {
-            Log.i(TAG, destinationFile + " moved successfully");
-          }
+            // Move the file
+            Log.i(TAG, "Moving " + downloadFile + " to " + destinationFile);
+            if (downloadFile.renameTo(destinationFile)) {
+              Log.i(TAG, destinationFile + " moved successfully");
+            }
+            break;
+          // If the download failed, print further information
+          case DownloadManager.STATUS_FAILED:
+            int index = cur.getColumnIndex(DownloadManager.COLUMN_REASON);
+            Log.i(TAG, "Download failed, reason=" + cur.getString(index));
+            break;
         }
       }
 
