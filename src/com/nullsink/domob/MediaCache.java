@@ -76,6 +76,14 @@ public class MediaCache {
         mSongCacheDir.mkdirs();
       }
 
+      // Setup the directory to store the cache on the external storage
+      File externalPicturesDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+      mArtCacheDir = new File(externalPicturesDir.getAbsolutePath());
+      if (mArtCacheDir.exists() == false) {
+        Log.i(TAG, mArtCacheDir + " does not exist, creating directory.");
+        mArtCacheDir.mkdirs();
+      }
+
       // Setup the directory to store the temporary DownloadManager files
       File externalDownloadDir = mContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
       mTempDownloadDir = new File(externalDownloadDir.getAbsolutePath());
@@ -206,6 +214,30 @@ public class MediaCache {
     return cached;
   }
 
+  /** \brief Check to see if the artwork is already in the album cover cache.
+   *  \return Returns true if the artwork is already cached, false otherwise.
+   *  \param[in] albumId The unique ID as from Ampache.
+   */
+  public boolean isArtCached(long albumId) throws Exception {
+    // Give up if the external storage isn't available
+    if (isExternalStorageReady() == false) {
+      return false;
+    }
+
+    // Initially set to false. Will switch to true if we find the file.
+    boolean cached = false;
+    // Construct the path to check for the cached song
+    File testFile = new File(cachedArtPath(albumId));
+
+    Log.i(TAG, "Checking if " + testFile + " exists.");
+    if (testFile.exists() == true) {
+      cached = true;
+      Log.i(TAG, testFile + " exists.");
+    }
+
+    return cached;
+  }
+
   /** \brief This checks to see if the cache directory has room for another song.
    *  \return Returns a boolean indicating that the external storage does have cache
    *          space available.
@@ -272,6 +304,17 @@ public class MediaCache {
    */
   public String cachedSongPath(long songUid) {
     String path = mSongCacheDir.getAbsolutePath() + "/" + songUid;
+    return path;
+  }
+
+  /**
+   * \return Returns a string with the path to the cached file or location
+   *         where the file would be cached. In other words, this takes a
+   *         album ID and converts that into a string for the file path.
+   * \param[in] albumId the unique ID as from Ampache
+   */
+  public String cachedArtPath(long albumId) {
+    String path = mArtCacheDir.getAbsolutePath() + "/" + albumId;
     return path;
   }
 
