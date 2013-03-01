@@ -416,7 +416,7 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
               prepared = false;
               // Just testing file caching. We really don't want to cache the
               // song currently playing. TODO: Cache future songs
-              mMediaCache.cacheSong(Long.valueOf(chosen.id), chosen.liveUrl());
+              mMediaCache.cacheSong(chosen);
             }
         } catch (Exception blah) {
             Log.i("domob", "Tried to get the song but couldn't...sorry D:");

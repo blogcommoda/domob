@@ -34,6 +34,7 @@ import android.util.Log;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
+import com.nullsink.domob.objects.Song;
 
 public class MediaCache {
   private DownloadManager mDownloadManager;
@@ -90,17 +91,16 @@ public class MediaCache {
   }
 
   /** \brief Add a song to the local music cache.
-   *  \param[in] songUid The unique ID as from Ampache.
-   *  \param[in] songUrl The actual live URL to download the track from Ampache.
+   *  \param[in] song The current song to cache from Ampache.
    */
-  public void cacheSong(long songUid, String songUrl) throws Exception {
+  public void cacheSong(Song song) throws Exception {
     // Give up if the external storage isn't available
     if (isExternalStorageReady() == false) {
       return;
     }
 
     // If the song is already cached, we are already done
-    if (checkIfCached(songUid) == true) {
+    if (checkIfCached(Long.valueOf(song.id)) == true) {
       return;
     }
 
@@ -116,11 +116,11 @@ public class MediaCache {
       makeCacheSpace();
     }
 
-    Log.i(TAG, "Attempting to cache song ID " + songUid);
+    Log.i(TAG, "Attempting to cache song ID " + song.id);
     // Generate a new request to then add to the download manager queue.
-    Request request = new Request(Uri.parse(songUrl));
+    Request request = new Request(Uri.parse(song.liveUrl()));
     // We can keep track of the Ampache song ID in the download description
-    request.setDescription(String.valueOf(songUid));
+    request.setDescription(song.id);
     // Set the title incase we want to view the downloads in the download manager for debugging
     request.setTitle("domob caching song");
     // Normally, we don't want these downloads to appear in the UI or notifications
@@ -128,8 +128,8 @@ public class MediaCache {
     // TODO: Buy a new phone that isn't stuck below API 11 :)
     //request.setNotificationVisibility(VISIBILITY_HIDDEN);
     // Set the destination to the external device in the downloads directory
-    request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS,
-                                             String.valueOf(songUid));
+    request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, song.id);
+
     // Queue up the request
     mSongDownloadId = mDownloadManager.enqueue(request);
     Log.i(TAG, "cacheSong queued download request mSongDownloadId=" + mSongDownloadId);
