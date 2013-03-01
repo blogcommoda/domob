@@ -168,13 +168,22 @@ public class MediaCache {
           String downloadUri = cur.getString(uriIndex);
           File downloadFile = new File(Uri.parse(downloadUri).getPath());
 
-          // Find the column which corresponds to the description we provided (Ampache song id)
+          // Find the column which corresponds to the description we provided (Ampache song/album id)
           int descriptionIndex = cur.getColumnIndex(DownloadManager.COLUMN_DESCRIPTION);
-          // Retreive the description
-          long ampacheSongUid = cur.getLong(descriptionIndex);
+          // Retreive the description. This will be something such as song:6 or album:15
+          String[] description = cur.getString(descriptionIndex).split(":");
+          String downloadType = description[0];
+          long downloadId = Long.valueOf(description[1]);
 
           // Setup the destination file
-          String destinationPath = cachedSongPath(ampacheSongUid);
+          String destinationPath = null;
+          if (downloadType.equals("song")) {
+            destinationPath = cachedSongPath(downloadId);
+          } else if (downloadType.equals("album")) {
+            destinationPath = cachedArtPath(downloadId);
+          }
+          Log.i(TAG, "downloadType=" + downloadType + " downloadId=" + downloadId);
+
           File destinationFile = new File(Uri.parse(destinationPath).getPath());
 
           // Move the file
