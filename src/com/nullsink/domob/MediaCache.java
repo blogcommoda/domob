@@ -100,7 +100,7 @@ public class MediaCache {
     }
 
     // If the song is already cached, we are already done
-    if (checkIfCached(Long.valueOf(song.id)) == true) {
+    if (isSongCached(Long.valueOf(song.id)) == true) {
       return;
     }
 
@@ -186,7 +186,7 @@ public class MediaCache {
    *  \return Returns true if the song is already cached, false otherwise.
    *  \param[in] songUid The unique ID as from Ampache.
    */
-  public boolean checkIfCached(long songUid) throws Exception {
+  public boolean isSongCached(long songUid) throws Exception {
     // Give up if the external storage isn't available
     if (isExternalStorageReady() == false) {
       return false;
