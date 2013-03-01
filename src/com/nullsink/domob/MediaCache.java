@@ -143,6 +143,39 @@ public class MediaCache {
     Log.i(TAG, "cacheSong queued download request mSongDownloadId=" + mSongDownloadId);
   }
 
+  /** \brief Add album covers to the local artwork cache.
+   *  \param[in] song The current song to cache from Ampache. This contains the album ID.
+   */
+  public void cacheArt(Song song) throws Exception {
+    // Give up if the external storage isn't available
+    if (isExternalStorageReady() == false) {
+      return;
+    }
+
+    // If the song is already cached, we are already done
+    if (isArtCached(Long.valueOf(song.albumId)) == true) {
+      return;
+    }
+
+    Log.i(TAG, "Attempting to cache art for album ID " + song.albumId);
+    // Generate a new request to then add to the download manager queue.
+    Request request = new Request(Uri.parse(song.liveArt()));
+    // We can keep track of the Ampache album ID in the download description
+    request.setDescription("album:" + song.albumId);
+    // Set the title in case we want to view the downloads in the download manager for debugging
+    request.setTitle("domob caching artwork");
+    // Normally, we don't want these downloads to appear in the UI or notifications
+    request.setVisibleInDownloadsUi(false);
+    // TODO: Buy a new phone that isn't stuck below API 11 :)
+    //request.setNotificationVisibility(VISIBILITY_HIDDEN);
+    // Set the destination to the external device in the downloads directory
+    request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, song.albumId);
+
+    // Queue up the request
+    mSongDownloadId = mDownloadManager.enqueue(request);
+    Log.i(TAG, "cacheSong queued download request mSongDownloadId=" + mSongDownloadId);
+  }
+
   /** \brief Handle the song finished download.
    *
    */
