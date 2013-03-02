@@ -139,7 +139,7 @@ public class MediaCache {
     // TODO: Buy a new phone that isn't stuck below API 11 :)
     //request.setNotificationVisibility(VISIBILITY_HIDDEN);
     // Set the destination to the external device in the downloads directory
-    request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, song.id);
+    request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, "song" + song.id);
 
     // Queue up the request
     mSongDownloadId = mDownloadManager.enqueue(request);
@@ -172,7 +172,7 @@ public class MediaCache {
     // TODO: Buy a new phone that isn't stuck below API 11 :)
     //request.setNotificationVisibility(VISIBILITY_HIDDEN);
     // Set the destination to the external device in the downloads directory
-    request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, song.albumId);
+    request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, "art" + song.albumId);
 
     // Queue up the request
     mArtDownloadId = mDownloadManager.enqueue(request);
