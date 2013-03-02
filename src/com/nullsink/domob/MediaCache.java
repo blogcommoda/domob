@@ -228,11 +228,19 @@ public class MediaCache {
             if (downloadFile.renameTo(destinationFile)) {
               Log.i(TAG, destinationFile + " moved successfully");
             }
+
+            // Remove the id from the download manager
+            int idIndex = cur.getColumnIndex(DownloadManager.COLUMN_ID);
+            Log.i(TAG, "Removing download id=" + cur.getLong(idIndex));
+            mDownloadManager.remove(cur.getLong(idIndex));
             break;
           // If the download failed, print further information
           case DownloadManager.STATUS_FAILED:
             int index = cur.getColumnIndex(DownloadManager.COLUMN_REASON);
             Log.i(TAG, "Download failed, reason=" + cur.getString(index));
+            break;
+          case DownloadManager.STATUS_RUNNING:
+            Log.i(TAG, "Download still running");
             break;
         }
       }
