@@ -192,8 +192,8 @@ public class MediaCache {
       query.setFilterById(mSongDownloadId, mArtDownloadId);
       Cursor cur = mDownloadManager.query(query);
 
-      // Access the first row of data returned
-      if (cur.moveToFirst()) {
+      // Start at first row of data and loop through to the last
+      for (cur.moveToFirst(); false == cur.isAfterLast(); cur.moveToNext()) {
         // Find the column which corresponds to the download status
         int statusIndex = cur.getColumnIndex(DownloadManager.COLUMN_STATUS);
         switch (cur.getInt(statusIndex)) {
