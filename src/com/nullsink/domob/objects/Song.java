@@ -61,7 +61,17 @@ public class Song extends ampacheObject implements Externalizable {
 
     /* Replace old session id, to use with the Album Art */
     public String liveArt() {
-        return art.replaceAll("auth=[^&]+","auth=" + com.nullsink.domob.domob.comm.authToken);
+        String updatedArt;
+
+        updatedArt = art.replaceAll("auth=[^&]+","auth=" + com.nullsink.domob.domob.comm.authToken);
+
+        // TODO: Chat with Ampache team to find out what is going on with artwork URL.
+        // Ampache returns URL                  foo/ampache/image.php?id=55object_type=album&auth=12345&name=art.jpg
+        // The correct URL is something such as foo/ampache/image.php?id=55&auth=12345
+        updatedArt = updatedArt.replace("&name=art.jpg", "");
+        updatedArt = updatedArt.replace("object_type=album", "");
+
+        return updatedArt;
     }
     
     public boolean hasChildren() {
