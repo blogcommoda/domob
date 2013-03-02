@@ -41,6 +41,8 @@ public class MediaCache {
   /// This keeps track of the song being downloaded. When this is set to NO_DOWNLOAD_IN_PROGRESS
   /// we can queue up another song. Otherwise, there is already a song being downloaded.
   private long mSongDownloadId;
+  /// This keeps track of the artwork being downloaded.
+  private long mArtDownloadId;
   private Context mContext;
   /// Maximum number of songs to cache
   private static final long MAX_SONGS_CACHED = 100;
@@ -65,6 +67,7 @@ public class MediaCache {
     mContext = mCtxt;
     mDownloadManager = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
     mSongDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Allow the system to cache another song initially
+    mArtDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Initialize to some value
 
     // Before creating any directories, double check the external storage
     if (isExternalStorageReady() == true) {
@@ -172,8 +175,8 @@ public class MediaCache {
     request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, song.albumId);
 
     // Queue up the request
-    mSongDownloadId = mDownloadManager.enqueue(request);
-    Log.i(TAG, "cacheSong queued download request mSongDownloadId=" + mSongDownloadId);
+    mArtDownloadId = mDownloadManager.enqueue(request);
+    Log.i(TAG, "cacheArt queued download request mArtDownloadId=" + mArtDownloadId);
   }
 
   /** \brief Handle the song finished download.
@@ -186,7 +189,7 @@ public class MediaCache {
     if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
       // Query for more info using the ID
       Query query = new Query();
-      query.setFilterById(mSongDownloadId);
+      query.setFilterById(mSongDownloadId, mArtDownloadId);
       Cursor cur = mDownloadManager.query(query);
 
       // Access the first row of data returned
