@@ -189,64 +189,72 @@ public class MediaCache {
     if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
       // Query for more info using the ID
       Query query = new Query();
-      query.setFilterById(mSongDownloadId, mArtDownloadId);
+      query.setFilterByStatus(DownloadManager.STATUS_SUCCESSFUL);
       Cursor cur = mDownloadManager.query(query);
 
       // Start at first row of data and loop through to the last
       for (cur.moveToFirst(); false == cur.isAfterLast(); cur.moveToNext()) {
-        // Find the column which corresponds to the download status
-        int statusIndex = cur.getColumnIndex(DownloadManager.COLUMN_STATUS);
-        switch (cur.getInt(statusIndex)) {
-          // If the download was successful try and move the file to our cache location
-          case DownloadManager.STATUS_SUCCESSFUL:
-            // Find the column which corresponds to the current file URI
-            int uriIndex = cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
-            // Retreive the temporary URI to where DownloadManager stored the file
-            String downloadUri = cur.getString(uriIndex);
-            File downloadFile = new File(Uri.parse(downloadUri).getPath());
+        int tempIndex = cur.getColumnIndex(DownloadManager.COLUMN_ID);
+        long currentId = cur.getLong(tempIndex);
+        Log.i(TAG, "currentId=" + currentId +
+                   " mSongDownloadId=" + mSongDownloadId +
+                   " mArtDownloadId=" + mArtDownloadId);
+        if (currentId == mSongDownloadId || currentId == mArtDownloadId) {
+          // Find the column which corresponds to the download status
+          int statusIndex = cur.getColumnIndex(DownloadManager.COLUMN_STATUS);
+          Log.i(TAG, "Download statusIndex=" + statusIndex + " cur.getInt(statusIndex)=" + cur.getInt(statusIndex));
+          switch (cur.getInt(statusIndex)) {
+            // If the download was successful try and move the file to our cache location
+            case DownloadManager.STATUS_SUCCESSFUL:
+              // Find the column which corresponds to the current file URI
+              int uriIndex = cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+              // Retreive the temporary URI to where DownloadManager stored the file
+              String downloadUri = cur.getString(uriIndex);
+              File downloadFile = new File(Uri.parse(downloadUri).getPath());
 
-            // Find the column which corresponds to the description we provided (Ampache song/album id)
-            int descriptionIndex = cur.getColumnIndex(DownloadManager.COLUMN_DESCRIPTION);
-            // Retreive the description. This will be something such as song:6 or album:15
-            String[] description = cur.getString(descriptionIndex).split(":");
-            String downloadType = description[0];
-            long downloadId = Long.valueOf(description[1]);
+              // Find the column which corresponds to the description we provided (Ampache song/album id)
+              int descriptionIndex = cur.getColumnIndex(DownloadManager.COLUMN_DESCRIPTION);
+              // Retreive the description. This will be something such as song:6 or album:15
+              String[] description = cur.getString(descriptionIndex).split(":");
+              String downloadType = description[0];
+              long downloadId = Long.valueOf(description[1]);
 
-            // Setup the destination file
-            String destinationPath = null;
-            if (downloadType.equals("song")) {
-              destinationPath = cachedSongPath(downloadId);
-            } else if (downloadType.equals("album")) {
-              destinationPath = cachedArtPath(downloadId);
-            }
-            Log.i(TAG, "downloadType=" + downloadType + " downloadId=" + downloadId);
+              // Setup the destination file
+              String destinationPath = null;
+              if (downloadType.equals("song")) {
+                destinationPath = cachedSongPath(downloadId);
+                // Also set the mSongDownloadId to indicate that no download is in progress
+                mSongDownloadId = NO_DOWNLOAD_IN_PROGRESS;
+              } else if (downloadType.equals("album")) {
+                destinationPath = cachedArtPath(downloadId);
+                mArtDownloadId = NO_DOWNLOAD_IN_PROGRESS;
+              }
+              Log.i(TAG, "downloadType=" + downloadType + " downloadId=" + downloadId);
 
-            File destinationFile = new File(Uri.parse(destinationPath).getPath());
+              File destinationFile = new File(Uri.parse(destinationPath).getPath());
 
-            // Move the file
-            Log.i(TAG, "Moving " + downloadFile + " to " + destinationFile);
-            if (downloadFile.renameTo(destinationFile)) {
-              Log.i(TAG, destinationFile + " moved successfully");
-            }
+              // Move the file
+              Log.i(TAG, "Moving " + downloadFile + " to " + destinationFile);
+              if (downloadFile.renameTo(destinationFile)) {
+                Log.i(TAG, destinationFile + " moved successfully");
+              }
 
-            // Remove the id from the download manager
-            int idIndex = cur.getColumnIndex(DownloadManager.COLUMN_ID);
-            Log.i(TAG, "Removing download id=" + cur.getLong(idIndex));
-            mDownloadManager.remove(cur.getLong(idIndex));
-            break;
-          // If the download failed, print further information
-          case DownloadManager.STATUS_FAILED:
-            int index = cur.getColumnIndex(DownloadManager.COLUMN_REASON);
-            Log.i(TAG, "Download failed, reason=" + cur.getString(index));
-            break;
-          case DownloadManager.STATUS_RUNNING:
-            Log.i(TAG, "Download still running");
-            break;
+              // Remove the id from the download manager
+              int idIndex = cur.getColumnIndex(DownloadManager.COLUMN_ID);
+              Log.i(TAG, "Removing download id=" + cur.getLong(idIndex));
+              mDownloadManager.remove(cur.getLong(idIndex));
+              break;
+            // If the download failed, print further information
+            case DownloadManager.STATUS_FAILED:
+              int index = cur.getColumnIndex(DownloadManager.COLUMN_REASON);
+              Log.i(TAG, "Download failed, reason=" + cur.getString(index));
+              break;
+            case DownloadManager.STATUS_RUNNING:
+              Log.i(TAG, "Download still running");
+              break;
+          }
         }
       }
-
-      // Also set the mDownloadId to indicate that no download is in progress
-      mSongDownloadId = NO_DOWNLOAD_IN_PROGRESS;
     }
   }
 
