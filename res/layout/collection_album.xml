@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
       android:orientation="vertical"
       android:layout_width="fill_parent"
       android:layout_height="48dip">
 
-  <TextView android:id="@+id/title" 
-            android:singleLine="true"
-            android:textSize="24sp"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+  <ImageView
+      android:id="+id/art"
+      android:src="#FFFFFF"
+      android:scaleType="centerInside"
+      android:layout_width="48dip"
+      android:layout_height="fill_parent" />
 
-  <TextView android:id="@+id/other" 
-            android:singleLine="true"
-            android:textSize="12sp"
-            android:paddingLeft="8sp"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+  <TextView
+      android:id="@+id/title"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_toRightOf="+id/art"
+      android:singleLine="true"
+      android:textSize="24sp" />
 
-</LinearLayout>
+  <TextView
+      android:id="@+id/other"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/title"
+      android:layout_toRightOf="+id/art"
+      android:paddingLeft="8sp"
+      android:singleLine="true"
+      android:textSize="12sp" />
+
+</RelativeLayout>
 
