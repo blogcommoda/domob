@@ -418,6 +418,8 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
               // song currently playing. TODO: Cache future songs
               mMediaCache.cacheSong(chosen);
             }
+            // Download a copy of the album art. Returns right away if it already exists.
+            mMediaCache.cacheArt(chosen);
         } catch (Exception blah) {
             Log.i("domob", "Tried to get the song but couldn't...sorry D:");
             return;
