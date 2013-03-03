@@ -401,7 +401,7 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
             Log.i("domob", "Song URL     - " + chosen.url );
             Log.i("domob", "Song URL (C) - " + chosen.liveUrl() );
             // Check to see if the file is already cached
-            if (mMediaCache.checkIfCached(Long.valueOf(chosen.id)) == true)
+            if (mMediaCache.isSongCached(Long.valueOf(chosen.id)) == true)
             {
               Log.i("domob", "Playing Song ID " + chosen.id + " from local cache.");
               domob.mp.setDataSource(mMediaCache.cachedSongPath(Long.valueOf(chosen.id)));
@@ -416,8 +416,10 @@ public final class playlistActivity extends Activity implements MediaPlayerContr
               prepared = false;
               // Just testing file caching. We really don't want to cache the
               // song currently playing. TODO: Cache future songs
-              mMediaCache.cacheSong(Long.valueOf(chosen.id), chosen.liveUrl());
+              mMediaCache.cacheSong(chosen);
             }
+            // Download a copy of the album art. Returns right away if it already exists.
+            mMediaCache.cacheArt(chosen);
         } catch (Exception blah) {
             Log.i("domob", "Tried to get the song but couldn't...sorry D:");
             return;
