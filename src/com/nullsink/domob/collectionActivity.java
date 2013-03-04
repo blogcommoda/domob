@@ -2,6 +2,7 @@ package com.nullsink.domob;
 
 /* Copyright (c) 2008-2009 Kevin James Purdy <purdyk@gmail.com   >
  * Copyright (c) 2009      Jacob Alexander   < haata@users.sf.net>
+ * Copyright (c) 2013      Ed Baker          <edward.david.baker@gmail.com>
  *
  * +------------------------------------------------------------------------+
  * | This program is free software; you can redistribute it and/or          |
@@ -141,7 +142,12 @@ public final class collectionActivity extends ListActivity implements OnItemLong
             //tell it how to handle the stuff
             requestMsg.replyTo = new Messenger (this.dataReadyHandler);
             domob.requestHandler.incomingRequestHandler.sendMessage(requestMsg);
-            dataReadyHandler.ca = new collectionAdapter(this, R.layout.browsable_item, list);
+            if (directive[0].equals("artist_albums") || directive[0].equals("albums")) {
+              Log.i(TAG, "Using collection_album");
+              dataReadyHandler.ca = new collectionAdapter(this, R.layout.collection_album, list);
+            } else {
+              dataReadyHandler.ca = new collectionAdapter(this, R.layout.browsable_item, list);
+            }
             setListAdapter(dataReadyHandler.ca);
         } else {
             setListAdapter(new collectionAdapter(this, R.layout.browsable_item, list));

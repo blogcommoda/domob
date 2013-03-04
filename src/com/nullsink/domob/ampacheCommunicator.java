@@ -1,6 +1,7 @@
 package com.nullsink.domob;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
+ * Copyright (c) 2013 Ed Baker          <edward.david.baker@gmail.com>
  *
  * +------------------------------------------------------------------------+
  * | This program is free software; you can redistribute it and/or          |

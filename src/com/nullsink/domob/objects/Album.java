@@ -1,6 +1,7 @@
 package com.nullsink.domob.objects;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
+ * Copyright (c) 2013 Ed Baker          <edward.david.baker@gmail.com>
  *
  * +------------------------------------------------------------------------+
  * | This program is free software; you can redistribute it and/or          |
@@ -20,6 +21,10 @@ package com.nullsink.domob.objects;
  * +------------------------------------------------------------------------+
  */
 
+import com.nullsink.domob.MediaCache;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcelable;
 import android.os.Parcel;
 import android.util.Log;
@@ -55,6 +60,27 @@ public class Album extends ampacheObject {
           }
         }
         return extra;
+    }
+
+    public Bitmap cachedArtworkBitmap(Context ctx) {
+      Bitmap bitmap = null;
+      MediaCache mediaCache =  new MediaCache(ctx);
+      long albumId = -1;
+      String artworkPath = null;
+
+      try {
+        albumId = Long.valueOf(id);
+      } catch (NumberFormatException e) {
+        Log.e(TAG, e.getMessage());
+      }
+
+      artworkPath = mediaCache.cachedArtPath(albumId);
+      mediaCache.close(); // Close the media cache since we no longer need it
+
+      Log.i(TAG, "Decoding bitmap for artworkPath=" + artworkPath);
+      bitmap = BitmapFactory.decodeFile(artworkPath);
+
+      return bitmap;
     }
 
     public String childString() {

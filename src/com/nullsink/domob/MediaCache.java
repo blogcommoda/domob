@@ -63,7 +63,7 @@ public class MediaCache {
     }
   };
 
-  MediaCache (Context mCtxt) {
+  public MediaCache (Context mCtxt) {
     mContext = mCtxt;
     mDownloadManager = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
     mSongDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Allow the system to cache another song initially
@@ -99,6 +99,12 @@ public class MediaCache {
     // When the Android download manager finishes a download
     mContext.registerReceiver(downloadCompleteReceiver,
                               new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+  }
+
+  /** \brief Cleanup
+   */
+  public void close() {
+    mContext.unregisterReceiver(downloadCompleteReceiver);
   }
 
   /** \brief Add a song to the local music cache.
