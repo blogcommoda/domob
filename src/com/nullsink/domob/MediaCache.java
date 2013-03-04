@@ -34,19 +34,24 @@ import android.util.Log;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
+import com.nullsink.domob.objects.Song;
 
 public class MediaCache {
   private DownloadManager mDownloadManager;
   /// This keeps track of the song being downloaded. When this is set to NO_DOWNLOAD_IN_PROGRESS
   /// we can queue up another song. Otherwise, there is already a song being downloaded.
-  private long mDownloadId;
+  private long mSongDownloadId;
+  /// This keeps track of the artwork being downloaded.
+  private long mArtDownloadId;
   private Context mContext;
   /// Maximum number of songs to cache
   private static final long MAX_SONGS_CACHED = 100;
   /// We can queue up another download
   private static final long NO_DOWNLOAD_IN_PROGRESS = -1;
-  /// Folder to store all of the local files
-  private File mCacheDir;
+  /// Folder to store all of the local songs
+  private File mSongCacheDir;
+  /// Folder to store all of the local art
+  private File mArtCacheDir;
   /// Folder to temporarily store files while downloading
   private File mTempDownloadDir;
   /// Used for calls to Log
@@ -58,19 +63,28 @@ public class MediaCache {
     }
   };
 
-  MediaCache (Context mCtxt) {
+  public MediaCache (Context mCtxt) {
     mContext = mCtxt;
     mDownloadManager = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
-    mDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Allow the system to cache another song initially
+    mSongDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Allow the system to cache another song initially
+    mArtDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Initialize to some value
 
     // Before creating any directories, double check the external storage
     if (isExternalStorageReady() == true) {
       // Setup the directory to store the cache on the external storage
       File externalMusicDir = mContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
-      mCacheDir = new File(externalMusicDir.getAbsolutePath());
-      if (mCacheDir.exists() == false) {
-        Log.i(TAG, mCacheDir + " does not exist, creating directory.");
-        mCacheDir.mkdirs();
+      mSongCacheDir = new File(externalMusicDir.getAbsolutePath());
+      if (mSongCacheDir.exists() == false) {
+        Log.i(TAG, mSongCacheDir + " does not exist, creating directory.");
+        mSongCacheDir.mkdirs();
+      }
+
+      // Setup the directory to store the cache on the external storage
+      File externalPicturesDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+      mArtCacheDir = new File(externalPicturesDir.getAbsolutePath());
+      if (mArtCacheDir.exists() == false) {
+        Log.i(TAG, mArtCacheDir + " does not exist, creating directory.");
+        mArtCacheDir.mkdirs();
       }
 
       // Setup the directory to store the temporary DownloadManager files
@@ -87,23 +101,28 @@ public class MediaCache {
                               new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
   }
 
-  /** \brief Add a song to the local music cache.
-   *  \param[in] songUid The unique ID as from Ampache.
-   *  \param[in] songUrl The actual live URL to download the track from Ampache.
+  /** \brief Cleanup
    */
-  public void cacheSong(long songUid, String songUrl) throws Exception {
+  public void close() {
+    mContext.unregisterReceiver(downloadCompleteReceiver);
+  }
+
+  /** \brief Add a song to the local music cache.
+   *  \param[in] song The current song to cache from Ampache.
+   */
+  public void cacheSong(Song song) throws Exception {
     // Give up if the external storage isn't available
     if (isExternalStorageReady() == false) {
       return;
     }
 
     // If the song is already cached, we are already done
-    if (checkIfCached(songUid) == true) {
+    if (isSongCached(Long.valueOf(song.id)) == true) {
       return;
     }
 
     // Check to see if we already have a download running. Only cache one song at a time.
-    if (mDownloadId != NO_DOWNLOAD_IN_PROGRESS) {
+    if (mSongDownloadId != NO_DOWNLOAD_IN_PROGRESS) {
       Log.i(TAG, "cacheSong returning, there is already a download in progress.");
       return;
     }
@@ -114,11 +133,11 @@ public class MediaCache {
       makeCacheSpace();
     }
 
-    Log.i(TAG, "Attempting to cache song ID " + songUid);
+    Log.i(TAG, "Attempting to cache song ID " + song.id);
     // Generate a new request to then add to the download manager queue.
-    Request request = new Request(Uri.parse(songUrl));
+    Request request = new Request(Uri.parse(song.liveUrl()));
     // We can keep track of the Ampache song ID in the download description
-    request.setDescription(String.valueOf(songUid));
+    request.setDescription("song:" + song.id);
     // Set the title incase we want to view the downloads in the download manager for debugging
     request.setTitle("domob caching song");
     // Normally, we don't want these downloads to appear in the UI or notifications
@@ -126,11 +145,44 @@ public class MediaCache {
     // TODO: Buy a new phone that isn't stuck below API 11 :)
     //request.setNotificationVisibility(VISIBILITY_HIDDEN);
     // Set the destination to the external device in the downloads directory
-    request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS,
-                                             String.valueOf(songUid));
+    request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, "song" + song.id);
+
     // Queue up the request
-    mDownloadId = mDownloadManager.enqueue(request);
-    Log.i(TAG, "cacheSong queued download request mDownloadId=" + mDownloadId);
+    mSongDownloadId = mDownloadManager.enqueue(request);
+    Log.i(TAG, "cacheSong queued download request mSongDownloadId=" + mSongDownloadId);
+  }
+
+  /** \brief Add album covers to the local artwork cache.
+   *  \param[in] song The current song to cache from Ampache. This contains the album ID.
+   */
+  public void cacheArt(Song song) throws Exception {
+    // Give up if the external storage isn't available
+    if (isExternalStorageReady() == false) {
+      return;
+    }
+
+    // If the song is already cached, we are already done
+    if (isArtCached(Long.valueOf(song.albumId)) == true) {
+      return;
+    }
+
+    Log.i(TAG, "Attempting to cache art for album ID " + song.albumId);
+    // Generate a new request to then add to the download manager queue.
+    Request request = new Request(Uri.parse(song.liveArt()));
+    // We can keep track of the Ampache album ID in the download description
+    request.setDescription("album:" + song.albumId);
+    // Set the title in case we want to view the downloads in the download manager for debugging
+    request.setTitle("domob caching artwork");
+    // Normally, we don't want these downloads to appear in the UI or notifications
+    request.setVisibleInDownloadsUi(false);
+    // TODO: Buy a new phone that isn't stuck below API 11 :)
+    //request.setNotificationVisibility(VISIBILITY_HIDDEN);
+    // Set the destination to the external device in the downloads directory
+    request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, "art" + song.albumId);
+
+    // Queue up the request
+    mArtDownloadId = mDownloadManager.enqueue(request);
+    Log.i(TAG, "cacheArt queued download request mArtDownloadId=" + mArtDownloadId);
   }
 
   /** \brief Handle the song finished download.
@@ -143,40 +195,73 @@ public class MediaCache {
     if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
       // Query for more info using the ID
       Query query = new Query();
-      query.setFilterById(mDownloadId);
+      query.setFilterById(mSongDownloadId, mArtDownloadId);
       Cursor cur = mDownloadManager.query(query);
 
-      // Access the first row of data returned
-      if (cur.moveToFirst()) {
+      // Start at first row of data and loop through to the last
+      for (cur.moveToFirst(); false == cur.isAfterLast(); cur.moveToNext()) {
+        int tempIndex = cur.getColumnIndex(DownloadManager.COLUMN_ID);
+        long currentId = cur.getLong(tempIndex);
+        Log.i(TAG, "currentId=" + currentId +
+                   " mSongDownloadId=" + mSongDownloadId +
+                   " mArtDownloadId=" + mArtDownloadId);
+
         // Find the column which corresponds to the download status
         int statusIndex = cur.getColumnIndex(DownloadManager.COLUMN_STATUS);
-        // If the download was successful try and move the file to our cache location
-        if (DownloadManager.STATUS_SUCCESSFUL == cur.getInt(statusIndex)) {
-          // Find the column which corresponds to the current file URI
-          int uriIndex = cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
-          // Retreive the temporary URI to where DownloadManager stored the file
-          String downloadUri = cur.getString(uriIndex);
-          File downloadFile = new File(Uri.parse(downloadUri).getPath());
+        Log.i(TAG, "Download statusIndex=" + statusIndex + " cur.getInt(statusIndex)=" + cur.getInt(statusIndex));
+        switch (cur.getInt(statusIndex)) {
+          // If the download was successful try and move the file to our cache location
+          case DownloadManager.STATUS_SUCCESSFUL:
+            // Find the column which corresponds to the current file URI
+            int uriIndex = cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+            // Retreive the temporary URI to where DownloadManager stored the file
+            String downloadUri = cur.getString(uriIndex);
+            File downloadFile = new File(Uri.parse(downloadUri).getPath());
 
-          // Find the column which corresponds to the description we provided (Ampache song id)
-          int descriptionIndex = cur.getColumnIndex(DownloadManager.COLUMN_DESCRIPTION);
-          // Retreive the description
-          long ampacheSongUid = cur.getLong(descriptionIndex);
+            // Find the column which corresponds to the description we provided (Ampache song/album id)
+            int descriptionIndex = cur.getColumnIndex(DownloadManager.COLUMN_DESCRIPTION);
+            // Retreive the description. This will be something such as song:6 or album:15
+            String[] description = cur.getString(descriptionIndex).split(":");
+            String downloadType = description[0];
+            long downloadId = Long.valueOf(description[1]);
 
-          // Setup the destination file
-          String destinationPath = cachedSongPath(ampacheSongUid);
-          File destinationFile = new File(Uri.parse(destinationPath).getPath());
+            // Setup the destination file
+            String destinationPath = null;
+            if (downloadType.equals("song")) {
+              destinationPath = cachedSongPath(downloadId);
+              // Also set the mSongDownloadId to indicate that no download is in progress
+              mSongDownloadId = NO_DOWNLOAD_IN_PROGRESS;
+            } else if (downloadType.equals("album")) {
+              destinationPath = cachedArtPath(downloadId);
+              mArtDownloadId = NO_DOWNLOAD_IN_PROGRESS;
+            }
+            Log.i(TAG, "downloadType=" + downloadType + " downloadId=" + downloadId);
 
-          // Move the file
-          Log.i(TAG, "Moving " + downloadFile + " to " + destinationFile);
-          if (downloadFile.renameTo(destinationFile)) {
-            Log.i(TAG, destinationFile + " moved successfully");
-          }
+            File destinationFile = new File(Uri.parse(destinationPath).getPath());
+
+            // Move the file
+            Log.i(TAG, "Moving " + downloadFile + " to " + destinationFile);
+            if (downloadFile.renameTo(destinationFile)) {
+              Log.i(TAG, destinationFile + " moved successfully");
+            }
+
+            // Remove the id from the download manager
+            int idIndex = cur.getColumnIndex(DownloadManager.COLUMN_ID);
+            Log.i(TAG, "Removing download id=" + cur.getLong(idIndex));
+            mDownloadManager.remove(cur.getLong(idIndex));
+            break;
+
+          // If the download failed, print further information
+          case DownloadManager.STATUS_FAILED:
+            int index = cur.getColumnIndex(DownloadManager.COLUMN_REASON);
+            Log.i(TAG, "Download failed, reason=" + cur.getString(index));
+            break;
+
+          case DownloadManager.STATUS_RUNNING:
+            Log.i(TAG, "Download still running");
+            break;
         }
       }
-
-      // Also set the mDownloadId to indicate that no download is in progress
-      mDownloadId = NO_DOWNLOAD_IN_PROGRESS;
     }
   }
 
@@ -184,7 +269,7 @@ public class MediaCache {
    *  \return Returns true if the song is already cached, false otherwise.
    *  \param[in] songUid The unique ID as from Ampache.
    */
-  public boolean checkIfCached(long songUid) throws Exception {
+  public boolean isSongCached(long songUid) throws Exception {
     // Give up if the external storage isn't available
     if (isExternalStorageReady() == false) {
       return false;
@@ -194,6 +279,30 @@ public class MediaCache {
     boolean cached = false;
     // Construct the path to check for the cached song
     File testFile = new File(cachedSongPath(songUid));
+
+    Log.i(TAG, "Checking if " + testFile + " exists.");
+    if (testFile.exists() == true) {
+      cached = true;
+      Log.i(TAG, testFile + " exists.");
+    }
+
+    return cached;
+  }
+
+  /** \brief Check to see if the artwork is already in the album cover cache.
+   *  \return Returns true if the artwork is already cached, false otherwise.
+   *  \param[in] albumId The unique ID as from Ampache.
+   */
+  public boolean isArtCached(long albumId) throws Exception {
+    // Give up if the external storage isn't available
+    if (isExternalStorageReady() == false) {
+      return false;
+    }
+
+    // Initially set to false. Will switch to true if we find the file.
+    boolean cached = false;
+    // Construct the path to check for the cached song
+    File testFile = new File(cachedArtPath(albumId));
 
     Log.i(TAG, "Checking if " + testFile + " exists.");
     if (testFile.exists() == true) {
@@ -217,7 +326,7 @@ public class MediaCache {
     // Initially set to false. Will switch to true if we find available space.
     boolean spaceAvailable = false;
     // Collect the list of files currently in the cache directory
-    String fileList[] = mCacheDir.list();
+    String fileList[] = mSongCacheDir.list();
     Log.i(TAG, "checkIfCacheSpaceAvailable, currently " + fileList.length + "/" + MAX_SONGS_CACHED);
 
     // If there is room left, return true
@@ -237,7 +346,7 @@ public class MediaCache {
       return;
     }
 
-    File cacheFiles[] = mCacheDir.listFiles();
+    File cacheFiles[] = mSongCacheDir.listFiles();
 
     // Before doing anything else, return if there is room left.
     if (cacheFiles.length < MAX_SONGS_CACHED) {
@@ -269,7 +378,18 @@ public class MediaCache {
    * \param[in] songUid the unique ID as from Ampache
    */
   public String cachedSongPath(long songUid) {
-    String path = mCacheDir.getAbsolutePath() + "/" + songUid;
+    String path = mSongCacheDir.getAbsolutePath() + "/" + songUid;
+    return path;
+  }
+
+  /**
+   * \return Returns a string with the path to the cached file or location
+   *         where the file would be cached. In other words, this takes a
+   *         album ID and converts that into a string for the file path.
+   * \param[in] albumId the unique ID as from Ampache
+   */
+  public String cachedArtPath(long albumId) {
+    String path = mArtCacheDir.getAbsolutePath() + "/" + albumId;
     return path;
   }
 

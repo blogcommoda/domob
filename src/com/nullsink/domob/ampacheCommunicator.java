@@ -1,6 +1,7 @@
 package com.nullsink.domob;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
+ * Copyright (c) 2013 Ed Baker          <edward.david.baker@gmail.com>
  *
  * +------------------------------------------------------------------------+
  * | This program is free software; you can redistribute it and/or          |
@@ -31,6 +32,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
+
 import java.lang.Integer;
 import java.lang.Long;
 import java.security.MessageDigest;
@@ -46,6 +49,8 @@ public class ampacheCommunicator
     private String update;
     private Context mCtxt;
     public String lastErr;
+    /// Used for calls to Log
+    private static final String TAG = "ampacheCommunicator";
 
     private XMLReader reader;
 
@@ -492,9 +497,12 @@ public class ampacheCommunicator
             if (localName.equals("song")) {
                 current = new Song();
                 current.id = attr.getValue("id");
+            } else if (localName.equals("album")) {
+                current.albumId = attr.getValue("id");
             }
         }
         
+        //TODO: Do we actually need this, or can we parse everything in startElement?
         public void endElement( String namespaceURI,
                                 String localName,
                                 String qName) throws SAXException {
