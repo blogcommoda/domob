@@ -75,6 +75,7 @@ public class Album extends ampacheObject {
       }
 
       artworkPath = mediaCache.cachedArtPath(albumId);
+      mediaCache.close(); // Close the media cache since we no longer need it
 
       Log.i(TAG, "Decoding bitmap for artworkPath=" + artworkPath);
       bitmap = BitmapFactory.decodeFile(artworkPath);

@@ -101,6 +101,12 @@ public class MediaCache {
                               new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
   }
 
+  /** \brief Cleanup
+   */
+  public void close() {
+    mContext.unregisterReceiver(downloadCompleteReceiver);
+  }
+
   /** \brief Add a song to the local music cache.
    *  \param[in] song The current song to cache from Ampache.
    */
