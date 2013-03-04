@@ -16,6 +16,7 @@
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_toRightOf="@+id/art"
+      android:paddingLeft="4sp"
       android:singleLine="true"
       android:textSize="24sp" />
 
@@ -25,7 +26,7 @@
       android:layout_height="wrap_content"
       android:layout_below="@id/title"
       android:layout_toRightOf="@+id/art"
-      android:paddingLeft="8sp"
+      android:paddingLeft="12sp"
       android:singleLine="true"
       android:textSize="12sp" />
 
