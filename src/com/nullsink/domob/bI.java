@@ -1,6 +1,7 @@
 package com.nullsink.domob;
 
 /* Copyright (c) 2008-2009 Kevin James Purdy <purdyk@gmail.com>                                              
+ * Copyright (c) 2013 Ed Baker               <edward.david.baker@gmail.com>
  *                                                                                                           
  * +------------------------------------------------------------------------+                                
  * | This program is free software; you can redistribute it and/or          |                                
@@ -20,9 +21,11 @@ package com.nullsink.domob;
  * +------------------------------------------------------------------------+                                
  */
 
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public final class bI {
+    ImageView art;
     TextView title;
     TextView other;
 }
