@@ -63,7 +63,7 @@ public class MediaCache {
     }
   };
 
-  MediaCache (Context mCtxt) {
+  public MediaCache (Context mCtxt) {
     mContext = mCtxt;
     mDownloadManager = (DownloadManager)mContext.getSystemService(Context.DOWNLOAD_SERVICE);
     mSongDownloadId = NO_DOWNLOAD_IN_PROGRESS; // Allow the system to cache another song initially

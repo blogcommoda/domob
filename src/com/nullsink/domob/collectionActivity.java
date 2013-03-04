@@ -141,7 +141,12 @@ public final class collectionActivity extends ListActivity implements OnItemLong
             //tell it how to handle the stuff
             requestMsg.replyTo = new Messenger (this.dataReadyHandler);
             domob.requestHandler.incomingRequestHandler.sendMessage(requestMsg);
-            dataReadyHandler.ca = new collectionAdapter(this, R.layout.browsable_item, list);
+            if (directive[0].equals("artist_albums")) {
+              Log.i(TAG, "Using collection_album");
+              dataReadyHandler.ca = new collectionAdapter(this, R.layout.collection_album, list);
+            } else {
+              dataReadyHandler.ca = new collectionAdapter(this, R.layout.browsable_item, list);
+            }
             setListAdapter(dataReadyHandler.ca);
         } else {
             setListAdapter(new collectionAdapter(this, R.layout.browsable_item, list));

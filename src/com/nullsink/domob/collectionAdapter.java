@@ -1,6 +1,7 @@
 package com.nullsink.domob;
 
 /* Copyright (c) 2008-2009 Kevin James Purdy <purdyk@gmail.com>                                              
+ * Copyright (c) 2013      Ed Baker          <edward.david.baker@gmail.com>
  *                                                                                                           
  * +------------------------------------------------------------------------+                                
  * | This program is free software; you can redistribute it and/or          |                                
@@ -25,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.nullsink.domob.objects.*;
 import java.util.ArrayList;
@@ -52,6 +54,7 @@ public final class collectionAdapter extends ArrayAdapter
             convertView = mInflater.inflate(resid, null);
             holder = new bI();
             
+            holder.art = (ImageView) convertView.findViewById(R.id.art);
             holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.other = (TextView) convertView.findViewById(R.id.other);
             
@@ -63,6 +66,11 @@ public final class collectionAdapter extends ArrayAdapter
         if (cur != null) {
             holder.title.setText(cur.toString());
             holder.other.setText(cur.extraString());
+
+            // Display the artwork if the layout has the field
+            if (holder.art != null) {
+              holder.art.setImageBitmap(((Album) cur).cachedArtworkBitmap(mCtx));
+            }
         }
         return convertView;
     }
