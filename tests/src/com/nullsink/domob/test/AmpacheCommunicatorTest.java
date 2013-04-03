@@ -57,4 +57,31 @@ public class AmpacheCommunicatorTest extends
     assertNotNull(mAmpacheCommunicator.authToken);
     assertNotSame(mAmpacheCommunicator.authToken, "");
   }
+
+  public void testNoHttpUrl() {
+    // First set all of the shared preference values
+    SharedPreferences.Editor editor = mSharedPreferences.edit();
+    editor.putString(USERNAME_PREFERENCE_KEY, SERVER_USERNAME);
+    editor.putString(PASSWORD_PREFERENCE_KEY, SERVER_PASSWORD);
+    editor.putString(URL_PREFERENCE_KEY, SERVER_URL_NO_HTTP);
+    editor.commit();
+
+    // With the preferences setup, create the communicator
+    try {
+      mAmpacheCommunicator = new ampacheCommunicator(mSharedPreferences, mCtxt);
+    } catch (Exception e) {
+      fail("Could not create ampacheCommunicator.");
+    }
+
+    // Try to connect to the server
+    try {
+      mAmpacheCommunicator.perform_auth_request();
+    } catch (Exception e) {
+      fail("Could not perform_auth_request.");
+    }
+
+    // If the connection was successful, the authtoken will be set
+    assertNotNull(mAmpacheCommunicator.authToken);
+    assertNotSame(mAmpacheCommunicator.authToken, "");
+  }
 }
