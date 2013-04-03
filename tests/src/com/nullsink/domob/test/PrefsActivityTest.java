@@ -5,7 +5,7 @@ import com.nullsink.domob.prefsActivity;
 import android.preference.Preference;
 import android.test.ActivityInstrumentationTestCase2;
 
-public class prefsActivityTest extends
+public class PrefsActivityTest extends
     ActivityInstrumentationTestCase2<prefsActivity> {
 
   private prefsActivity mActivity;
@@ -13,7 +13,7 @@ public class prefsActivityTest extends
   private Preference mServerUsernamePreference;
   private Preference mServerPasswordPreference;
 
-  public prefsActivityTest() {
+  public PrefsActivityTest() {
     super("com.nullsink.domob", prefsActivity.class);
   }
 
