@@ -56,7 +56,7 @@ public class ampacheCommunicator
 
     private SharedPreferences prefs;
 
-    ampacheCommunicator(SharedPreferences preferences, Context context) throws Exception {
+    public ampacheCommunicator(SharedPreferences preferences, Context context) throws Exception {
         prefs = preferences;
         mCtxt = context;
         System.setProperty("org.xml.sax.driver","org.xmlpull.v1.sax2.Driver");
