@@ -1,8 +1,6 @@
 package com.nullsink.domob.test;
 
 import com.nullsink.domob.ampacheCommunicator;
-import com.nullsink.domob.prefsActivity;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -13,7 +11,6 @@ public class AmpacheCommunicatorTest extends
 
   private ampacheCommunicator mAmpacheCommunicator;
   private Context mCtxt;
-  private Activity mActivity;
   private SharedPreferences mSharedPreferences;
   private static final String PASSWORD_PREFERENCE_KEY = "server_password_preference";
   private static final String USERNAME_PREFERENCE_KEY = "server_username_preference";
