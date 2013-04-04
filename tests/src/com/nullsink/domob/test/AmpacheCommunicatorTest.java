@@ -15,10 +15,12 @@ public class AmpacheCommunicatorTest extends
   private static final String PASSWORD_PREFERENCE_KEY = "server_password_preference";
   private static final String USERNAME_PREFERENCE_KEY = "server_username_preference";
   private static final String URL_PREFERENCE_KEY = "server_url_preference";
+  private static final String PROTOCOL_PREFERENCE_KEY = "server_protocol_preference";
   private static final String SERVER_USERNAME = "test";
   private static final String SERVER_PASSWORD = "test";
   private static final String SERVER_URL_HTTP = "http://localhost/ampache";
   private static final String SERVER_URL_NO_HTTP = "localhost/ampache";
+  private static final String[] SERVER_PROTOCOLS = {"http"};
 
   @Override
   protected void setUp() throws Exception {
@@ -26,6 +28,33 @@ public class AmpacheCommunicatorTest extends
 
     mCtxt = getContext();
     mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtxt);
+  }
+
+  public void testFetchFromServer() {
+    // Loop through all of the protocols
+    for (int x = 0; x < SERVER_PROTOCOLS.length; x++) {
+      // First set all of the shared preference values
+      SharedPreferences.Editor editor = mSharedPreferences.edit();
+      editor.putString(USERNAME_PREFERENCE_KEY, SERVER_USERNAME);
+      editor.putString(PASSWORD_PREFERENCE_KEY, SERVER_PASSWORD);
+      editor.putString(URL_PREFERENCE_KEY, SERVER_URL_HTTP);
+      editor.putString(PROTOCOL_PREFERENCE_KEY, SERVER_PROTOCOLS[x]);
+      editor.commit();
+
+      // With the preferences setup, create the communicator
+      try {
+        mAmpacheCommunicator = new ampacheCommunicator(mSharedPreferences, mCtxt);
+      } catch (Exception e) {
+        fail("Could not create ampacheCommunicator.");
+      }
+
+      // Check to see if constructing the URL throws an exception
+      try {
+        mAmpacheCommunicator.fetchFromServer("");
+      } catch (Exception e) {
+        fail(e.getMessage());
+      }
+    }
   }
 
   public void testHttpUrl() {
@@ -41,13 +70,6 @@ public class AmpacheCommunicatorTest extends
       mAmpacheCommunicator = new ampacheCommunicator(mSharedPreferences, mCtxt);
     } catch (Exception e) {
       fail("Could not create ampacheCommunicator.");
-    }
-
-    // Do a quick check to see if constructing the URL throws an exception
-    try {
-      mAmpacheCommunicator.fetchFromServer("");
-    } catch (Exception e) {
-      fail(e.getMessage());
     }
 
     // Try to connect to the server
@@ -75,13 +97,6 @@ public class AmpacheCommunicatorTest extends
       mAmpacheCommunicator = new ampacheCommunicator(mSharedPreferences, mCtxt);
     } catch (Exception e) {
       fail("Could not create ampacheCommunicator.");
-    }
-
-    // Do a quick check to see if constructing the URL throws an exception
-    try {
-      mAmpacheCommunicator.fetchFromServer("");
-    } catch (Exception e) {
-      fail(e.getMessage());
     }
 
     // Try to connect to the server
