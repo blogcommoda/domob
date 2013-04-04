@@ -46,6 +46,13 @@ public class AmpacheCommunicatorTest extends
       fail("Could not create ampacheCommunicator.");
     }
 
+    // Do a quick check to see if constructing the URL throws an exception
+    try {
+      mAmpacheCommunicator.fetchFromServer("");
+    } catch (Exception e) {
+      fail(e.getMessage());
+    }
+
     // Try to connect to the server
     try {
       mAmpacheCommunicator.perform_auth_request();
@@ -71,6 +78,13 @@ public class AmpacheCommunicatorTest extends
       mAmpacheCommunicator = new ampacheCommunicator(mSharedPreferences, mCtxt);
     } catch (Exception e) {
       fail("Could not create ampacheCommunicator.");
+    }
+
+    // Do a quick check to see if constructing the URL throws an exception
+    try {
+      mAmpacheCommunicator.fetchFromServer("");
+    } catch (Exception e) {
+      fail(e.getMessage());
     }
 
     // Try to connect to the server
