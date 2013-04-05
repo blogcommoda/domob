@@ -55,12 +55,60 @@ public class ampacheCommunicator
     private XMLReader reader;
 
     private SharedPreferences prefs;
+    /// Ampache server URL
+    private URL mServerUrl;
 
     public ampacheCommunicator(SharedPreferences preferences, Context context) throws Exception {
         prefs = preferences;
         mCtxt = context;
         System.setProperty("org.xml.sax.driver","org.xmlpull.v1.sax2.Driver");
         reader = XMLReaderFactory.createXMLReader();
+        parsePreferences(preferences);
+    }
+
+    /**
+     * Parses the Ampache server connection preferences and constructs a URL
+     * @param preferences
+     */
+    private void parsePreferences(SharedPreferences preferences) {
+      boolean missingProtocol = false;
+      URL tempURL = null;
+      String serverProtocol;
+      String urlPreference;
+
+      // Load the protocol preference, this should be good already
+      serverProtocol = preferences.getString("server_protocol_preference", "");
+      // Read the URL preference field, this will need some checking
+      urlPreference = preferences.getString("server_url_preference", "");
+
+      // See if constructing a URL directly from the preference works
+      try {
+        tempURL = new URL(urlPreference);
+      } catch (MalformedURLException e) {
+        if (e.getMessage().contains("Protocol not found")) {
+          missingProtocol = true;
+        }
+        lastErr = e.getMessage();
+      }
+
+      // If the protocol is missing, create the URL again
+      if (missingProtocol) {
+        try {
+          tempURL = new URL(serverProtocol + "://" + urlPreference);
+        } catch (MalformedURLException e) {
+          lastErr = e.getMessage();
+        }
+      }
+
+      // Force the protocol to be the value in the preferences
+      try {
+        tempURL = new URL(serverProtocol, tempURL.getHost(), tempURL.getFile());
+      } catch (MalformedURLException e) {
+        lastErr = e.getMessage();
+      }
+
+      // Finally update the class variable
+      mServerUrl = tempURL;
     }
 
     public void ping() {
