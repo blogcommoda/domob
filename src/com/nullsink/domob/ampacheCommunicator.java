@@ -250,8 +250,7 @@ public class ampacheCommunicator
 
                         /* now we fetch */
                         try {
-                            URL theUrl = new URL(prefs.getString("server_url_preference", "") + "/server/xml.server.php?" + append);
-                            dataIn = new InputSource(theUrl.openStream());
+                            dataIn = new InputSource(fetchFromServer(append));
                         } catch (Exception poo) {
                             error = poo.toString();
                         }
