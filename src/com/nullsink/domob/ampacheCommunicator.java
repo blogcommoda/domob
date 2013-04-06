@@ -163,7 +163,8 @@ public class ampacheCommunicator
     }
 
     public InputStream fetchFromServer(String append) throws Exception {
-        URL fullUrl = new URL(prefs.getString("server_url_preference", "") + "/server/xml.server.php?" + append);
+        String newUrl = mServerUrl.toString() + "/server/xml.server.php?" + append;
+        URL fullUrl = new URL(newUrl);
         return fullUrl.openStream();
     }
 
