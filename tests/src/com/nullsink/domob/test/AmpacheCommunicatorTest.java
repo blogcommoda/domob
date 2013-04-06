@@ -19,7 +19,8 @@ public class AmpacheCommunicatorTest extends
   private static final String SERVER_USERNAME = "test";
   private static final String SERVER_PASSWORD = "test";
   private static final String[] SERVER_URLS = {"localhost/ampache",
-                                               "http://localhost/ampache"};
+                                               "http://localhost/ampache",
+                                               "https://localhost/ampache"};
   private static final String[] SERVER_PROTOCOLS = {"http"};
 
   @Override
@@ -54,7 +55,7 @@ public class AmpacheCommunicatorTest extends
         try {
           mAmpacheCommunicator.fetchFromServer("");
         } catch (Exception e) {
-          fail(e.getMessage());
+          fail(e.toString());
         }
       }
     }
