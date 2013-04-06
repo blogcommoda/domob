@@ -63,7 +63,7 @@ public class ampacheCommunicator
         mCtxt = context;
         System.setProperty("org.xml.sax.driver","org.xmlpull.v1.sax2.Driver");
         reader = XMLReaderFactory.createXMLReader();
-        parsePreferences(preferences);
+        parsePreferences(prefs);
     }
 
     /**
@@ -124,6 +124,9 @@ public class ampacheCommunicator
     }
 
     public void perform_auth_request() throws Exception {
+        // Repopulate the URL, this method may be called to due preferences changes
+        parsePreferences(prefs);
+
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         /* Get the current time, and convert it to a string */
         String time = Long.toString((new Date()).getTime() / 1000);
