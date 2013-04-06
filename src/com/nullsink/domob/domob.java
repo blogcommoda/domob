@@ -105,7 +105,7 @@ public final class domob extends Application {
         bufferPC = 0;
 
         cache = new Bundle();
-        
+
         //Make sure we check for phone calls
         TelephonyManager tmgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         tmgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -116,7 +116,7 @@ public final class domob extends Application {
             requestHandler = comm.new ampacheRequestHandler();
             requestHandler.start();
         } catch (Exception poo) {
-            
+
         }
         playlistCurrent = new ArrayList();
     }
