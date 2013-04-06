@@ -1,6 +1,7 @@
 package com.nullsink.domob;
 
 /* Copyright (c) 2008 Kevin James Purdy <purdyk@onid.orst.edu>
+ * Copyright (c) 2013 Ed Baker          <edward.david.baker@gmail.com>
  *
  * +------------------------------------------------------------------------+
  * | This program is free software; you can redistribute it and/or          |
@@ -25,12 +26,14 @@ import com.nullsink.domob.ampacheCommunicator.ampacheRequestHandler;
 import android.app.Application;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import java.util.ArrayList;
 import com.nullsink.domob.objects.*;
 import android.os.Bundle;
 import android.media.MediaPlayer;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.media.AudioManager;
 import android.content.Context;
 
@@ -47,6 +50,22 @@ public final class domob extends Application {
     public static Boolean confChanged;
     protected static Bundle cache;
     private static Boolean mResumeAfterCall = false;
+    /// Used for calls to Log
+    private static final String TAG = "domob";
+
+    /**
+     * Reload preferences if they are modified.
+     */
+    private OnSharedPreferenceChangeListener mPrefsChangedListener = new OnSharedPreferenceChangeListener() {
+      @Override
+      public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        try {
+          comm.perform_auth_request();
+        } catch (Exception e) {
+          Log.e(TAG, e.toString());
+        }
+      }
+    };
 
     //Handle phone calls
     private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
@@ -79,13 +98,14 @@ public final class domob extends Application {
         //Debug.waitForDebugger();
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(mPrefsChangedListener);
         mp = new MediaPlayer();
 
         playingIndex = 0;
         bufferPC = 0;
 
         cache = new Bundle();
-        
+
         //Make sure we check for phone calls
         TelephonyManager tmgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         tmgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -96,7 +116,7 @@ public final class domob extends Application {
             requestHandler = comm.new ampacheRequestHandler();
             requestHandler.start();
         } catch (Exception poo) {
-            
+
         }
         playlistCurrent = new ArrayList();
     }
