@@ -55,12 +55,60 @@ public class ampacheCommunicator
     private XMLReader reader;
 
     private SharedPreferences prefs;
+    /// Ampache server URL
+    private URL mServerUrl;
 
-    ampacheCommunicator(SharedPreferences preferences, Context context) throws Exception {
+    public ampacheCommunicator(SharedPreferences preferences, Context context) throws Exception {
         prefs = preferences;
         mCtxt = context;
         System.setProperty("org.xml.sax.driver","org.xmlpull.v1.sax2.Driver");
         reader = XMLReaderFactory.createXMLReader();
+        parsePreferences(preferences);
+    }
+
+    /**
+     * Parses the Ampache server connection preferences and constructs a URL
+     * @param preferences
+     */
+    private void parsePreferences(SharedPreferences preferences) {
+      boolean missingProtocol = false;
+      URL tempURL = null;
+      String serverProtocol;
+      String urlPreference;
+
+      // Load the protocol preference, this should be good already
+      serverProtocol = preferences.getString("server_protocol_preference", "");
+      // Read the URL preference field, this will need some checking
+      urlPreference = preferences.getString("server_url_preference", "");
+
+      // See if constructing a URL directly from the preference works
+      try {
+        tempURL = new URL(urlPreference);
+      } catch (MalformedURLException e) {
+        if (e.getMessage().contains("Protocol not found")) {
+          missingProtocol = true;
+        }
+        lastErr = e.getMessage();
+      }
+
+      // If the protocol is missing, create the URL again
+      if (missingProtocol) {
+        try {
+          tempURL = new URL(serverProtocol + "://" + urlPreference);
+        } catch (MalformedURLException e) {
+          lastErr = e.getMessage();
+        }
+      }
+
+      // Force the protocol to be the value in the preferences
+      try {
+        tempURL = new URL(serverProtocol, tempURL.getHost(), tempURL.getFile());
+      } catch (MalformedURLException e) {
+        lastErr = e.getMessage();
+      }
+
+      // Finally update the class variable
+      mServerUrl = tempURL;
     }
 
     public void ping() {
@@ -79,20 +127,20 @@ public class ampacheCommunicator
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         /* Get the current time, and convert it to a string */
         String time = Long.toString((new Date()).getTime() / 1000);
-        
+
         /* build our passphrase hash */
         md.reset();
-        
+
         /* first hash the password */
         String pwHash = prefs.getString("server_password_preference", "");
         md.update(pwHash.getBytes(), 0, pwHash.length());
         String preHash = time + asHex(md.digest());
-        
+
         /* then hash the timestamp in */
         md.reset();
         md.update(preHash.getBytes(), 0, preHash.length());
         String hash = asHex(md.digest());
-        
+
         /* request server auth */
         ampacheAuthParser hand = new ampacheAuthParser();
         reader.setContentHandler(hand);
@@ -113,9 +161,10 @@ public class ampacheCommunicator
         songs = hand.songs;
         update = hand.update;
     }
-   
+
     public InputStream fetchFromServer(String append) throws Exception {
-        URL fullUrl = new URL(prefs.getString("server_url_preference", "") + "/server/xml.server.php?" + append);
+        String newUrl = mServerUrl.toString() + "/server/xml.server.php?" + append;
+        URL fullUrl = new URL(newUrl);
         return fullUrl.openStream();
     }
 
@@ -123,22 +172,22 @@ public class ampacheCommunicator
     {
         public void receiveObjects(ArrayList data);
     }
-    
+
     public class ampacheRequestHandler extends Thread
     {
         private ampacheDataReceiver recv = null;
         private dataHandler hand;
         private Context mCtx;
-        
+
         private String type;
         private String filter;
-        
+
         public Handler incomingRequestHandler;
         public Boolean stop = false;
-        
+
         public void run() {
             Looper.prepare();
-            
+
             incomingRequestHandler = new Handler() {
                     public void handleMessage(Message msg) {
                         String[] directive = (String[]) msg.obj;
@@ -148,9 +197,9 @@ public class ampacheCommunicator
                         Message reply = new Message();
                         ArrayList<ampacheObject> goods = null;
                         InputSource dataIn = null;
-                        
+
                         append = "action=" + directive[0];
-                        
+
                         if (directive[0].equals("artists")) {
                             hand = new ampacheArtistParser();
                         } else if (directive[0].equals("artist_albums")) {
@@ -161,7 +210,7 @@ public class ampacheCommunicator
                             hand = new ampacheSongParser();
                         } else if (directive[0].equals("album_songs")) {
                             append += "&filter=" + directive[1];
-                            hand = new ampacheSongParser();        
+                            hand = new ampacheSongParser();
                         } else if (directive[0].equals("playlist_songs")) {
                             append += "&filter=" + directive[1];
                             hand = new ampacheSongParser();
@@ -183,9 +232,9 @@ public class ampacheCommunicator
                             hand = new ampacheSongParser();
                             append += "&filter=" + directive[1];
                         } else {
-                            return; 
+                            return;
                         }
-                        
+
                         if (msg.what == 0x1336) {
                             append += "&offset=" + msg.arg1 + "&limit=100";
                             reply.arg1 = msg.arg1;
@@ -201,8 +250,7 @@ public class ampacheCommunicator
 
                         /* now we fetch */
                         try {
-                            URL theUrl = new URL(prefs.getString("server_url_preference", "") + "/server/xml.server.php?" + append);
-                            dataIn = new InputSource(theUrl.openStream());
+                            dataIn = new InputSource(fetchFromServer(append));
                         } catch (Exception poo) {
                             error = poo.toString();
                         }
@@ -219,7 +267,7 @@ public class ampacheCommunicator
                         } catch (Exception poo) {
                             error = poo.toString();;
                         }
-                        
+
                         if (hand.error != null) {
                             if (hand.errorCode == 401) {
                                 try {
@@ -253,8 +301,8 @@ public class ampacheCommunicator
                 };
             Looper.loop();
         }
-    }     
-    
+    }
+
     private class dataHandler extends DefaultHandler {
         public ArrayList<ampacheObject> data = new ArrayList();
         public String error = null;
@@ -262,9 +310,9 @@ public class ampacheCommunicator
         protected CharArrayWriter contents = new CharArrayWriter();
 
         public void startDocument() throws SAXException {
-            
+
         }
-        
+
         public void endDocument() throws SAXException {
 
         }
@@ -290,7 +338,7 @@ public class ampacheCommunicator
                 error = contents.toString();
             }
         }
-        
+
     }
 
     private class ampacheAuthParser extends dataHandler {
@@ -325,15 +373,15 @@ public class ampacheCommunicator
             }
         }
     }
-    
+
     private class ampacheArtistParser extends dataHandler {
         private Artist current;
-        
+
         public void startElement( String namespaceURI,
                                   String localName,
                                   String qName,
                                   Attributes attr) throws SAXException {
-            
+
             super.startElement(namespaceURI, localName, qName, attr);
 
             if (localName.equals("artist")) {
@@ -341,11 +389,11 @@ public class ampacheCommunicator
                 current.id = attr.getValue("id");
             }
         }
-        
+
         public void endElement( String namespaceURI,
                                 String localName,
                                 String qName) throws SAXException {
-            
+
             super.endElement(namespaceURI, localName, qName);
 
             if (localName.equals("name")) {
@@ -362,15 +410,15 @@ public class ampacheCommunicator
 
         }
     }
-    
+
     private class ampacheAlbumParser extends dataHandler {
         private Album current;
-        
+
         public void startElement( String namespaceURI,
                                   String localName,
                                   String qName,
                                   Attributes attr) throws SAXException {
-            
+
             super.startElement(namespaceURI, localName, qName, attr);
 
             if (localName.equals("album")) {
@@ -378,17 +426,17 @@ public class ampacheCommunicator
                 current.id = attr.getValue("id");
             }
         }
-        
+
         public void endElement( String namespaceURI,
                                 String localName,
                                 String qName) throws SAXException {
-            
+
             super.endElement(namespaceURI, localName, qName);
 
             if (localName.equals("name")) {
                 current.name = contents.toString();
             }
-            
+
             if (localName.equals("artist")) {
                 current.artist = contents.toString();
             }
@@ -406,15 +454,15 @@ public class ampacheCommunicator
             }
         }
     }
-    
+
     private class ampacheTagParser extends dataHandler {
         private Tag current;
-        
+
         public void startElement( String namespaceURI,
                                   String localName,
                                   String qName,
                                   Attributes attr) throws SAXException {
-            
+
             super.startElement(namespaceURI, localName, qName, attr);
 
             if (localName.equals("tag")) {
@@ -422,11 +470,11 @@ public class ampacheCommunicator
                 current.id = attr.getValue("id");
             }
         }
-        
+
         public void endElement( String namespaceURI,
                                 String localName,
                                 String qName) throws SAXException {
-            
+
             super.endElement(namespaceURI, localName, qName);
 
             if (localName.equals("name")) {
@@ -443,15 +491,15 @@ public class ampacheCommunicator
             }
         }
     }
-    
+
     private class ampachePlaylistParser extends dataHandler {
         private Playlist current;
-        
+
         public void startElement( String namespaceURI,
                                   String localName,
                                   String qName,
                                   Attributes attr) throws SAXException {
-            
+
             super.startElement(namespaceURI, localName, qName, attr);
 
             if (localName.equals("playlist")) {
@@ -459,17 +507,17 @@ public class ampacheCommunicator
                 current.id = attr.getValue("id");
             }
         }
-        
+
         public void endElement( String namespaceURI,
                                 String localName,
                                 String qName) throws SAXException {
-            
+
             super.endElement(namespaceURI, localName, qName);
 
             if (localName.equals("name")) {
                 current.name = contents.toString();
             }
-            
+
             if (localName.equals("owner")) {
                 current.owner = contents.toString();
             }
@@ -477,21 +525,21 @@ public class ampacheCommunicator
             if (localName.equals("items")) {
                 current.count = contents.toString();
             }
-            
+
             if (localName.equals("playlist")) {
                 data.add(current);
             }
         }
     }
-    
+
     private class ampacheSongParser extends dataHandler {
         private Song current;
-        
+
         public void startElement( String namespaceURI,
                                   String localName,
                                   String qName,
                                   Attributes attr) throws SAXException {
-            
+
             super.startElement(namespaceURI, localName, qName, attr);
 
             if (localName.equals("song")) {
@@ -501,30 +549,30 @@ public class ampacheCommunicator
                 current.albumId = attr.getValue("id");
             }
         }
-        
+
         //TODO: Do we actually need this, or can we parse everything in startElement?
         public void endElement( String namespaceURI,
                                 String localName,
                                 String qName) throws SAXException {
-            
+
             super.endElement(namespaceURI, localName, qName);
 
             if (localName.equals("song")) {
                 data.add(current);
             }
-            
+
             if (localName.equals("title")) {
                 current.name = contents.toString();
             }
-            
+
             if (localName.equals("artist")) {
                 current.artist = contents.toString();
             }
-            
+
             if (localName.equals("art")) {
                 current.art = contents.toString();
             }
-            
+
             if (localName.equals("url")) {
                 current.url = contents.toString();
             }

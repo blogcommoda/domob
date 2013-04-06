@@ -20,6 +20,13 @@
                 android:summary="@string/summary_password_preference"
                 android:dialogTitle="@string/dialog_password_preference"
                 android:password="true" />
+        <ListPreference
+                android:key="server_protocol_preference"
+                android:title="@string/title_protocols_preference"
+                android:entryValues="@array/protocols_entries_values_preference"
+                android:entries="@array/protocols_entries_preference"
+                android:dialogTitle="@string/dialog_title_protocols_preference"
+                android:defaultValue="@string/protocols_default_value_preference" />
     </PreferenceCategory>
 </PreferenceScreen>
         
